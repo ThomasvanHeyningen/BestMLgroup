@@ -213,8 +213,6 @@ def trainclf(X, y, namesClasses):
     print np.mean(scores)
     return(y_pred, y_pred2)
 
-
-#maincode
 if __name__ == '__main__':
     # get the classnames from the directory structure
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
