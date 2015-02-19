@@ -222,3 +222,4 @@ if __name__ == '__main__':
     (y_pred, y_pred2) = trainclf(X, y, classnames)
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_pred2)
+    #met n_estimators = 5 levert een score van 17.49 op, ca. 10-20 minuten om alle afbeeldingen in te laden.
