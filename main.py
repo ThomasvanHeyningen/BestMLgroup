@@ -119,7 +119,7 @@ def readimages():
     maxPixel = 25
     imageSize = maxPixel * maxPixel
     num_rows = numberofImages # one row for each image in the training dataset
-    num_features = imageSize + 1 # for our ratio
+    num_features = imageSize + 3 # for our ratio
 
     # X is the feature vector with one row of features per image
     # consisting of the pixel values and our metric
@@ -156,8 +156,8 @@ def readimages():
                 # Store the rescaled image pixels and the axis ratio
                 X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
                 X[i, imageSize+0] = axisratio
-                #X[i, imageSize+1] = height # this might not be good
-                #X[i, imageSize+2] = width# this might not be good
+                X[i, imageSize+1] = height # this might not be good
+                X[i, imageSize+2] = width# this might not be good
 
                 # Store the classlabel
                 y[i] = label
