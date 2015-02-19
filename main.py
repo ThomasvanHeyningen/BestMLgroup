@@ -201,7 +201,7 @@ def trainclf(X, y, namesClasses):
     y_pred = y * 0
     y_pred2 = np.zeros((len(y),len(set(y))))
     for train, test in kf:
-        print "one in the forloop"
+        print "running fold"
         X_train, X_test, y_train, y_test = X[train,:], X[test,:], y[train], y[test]
         clf = RF(n_estimators=5, n_jobs=3) #stond op 100
         clf.fit(X_train, y_train)
