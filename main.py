@@ -96,13 +96,13 @@ def makeplots(X, y, namesClasses, num_features):
         plt.xlabel("Width/Length Ratio")
 
 def trainclf(X, y, namesClasses):
-    kf = KFold(y, n_folds=3) #stond op 5
+    kf = KFold(y, n_folds=5) #stond op 5
     y_pred = y * 0
     y_pred2 = np.zeros((len(y),len(set(y))))
     for train, test in kf:
         print "running fold"
         X_train, X_test, y_train, y_test = X[train,:], X[test,:], y[train], y[test]
-        clf = RF(n_estimators=5, n_jobs=3) #stond op 100
+        clf = RF(n_estimators=100, n_jobs=3) #stond op 100
         clf.fit(X_train, y_train)
         y_pred[test] = clf.predict(X_test)
         y_pred2[test] = clf.predict_proba(X_test)
