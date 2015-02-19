@@ -241,12 +241,12 @@ def multiclass_log_loss(y_true, y_pred, eps=1e-15):
 
 
 #maincode
+if __name__ == '__main__':
+    # get the classnames from the directory structure
+    directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
+    ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
 
-# get the classnames from the directory structure
-directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
- ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
+    (X,y,classnames,num_features) = readimages()
+    (y_pred, y_pred2) = trainclf(X, y, classnames)
 
-(X,y,classnames,num_features) = readimages()
-(y_pred, y_pred2) = trainclf(X, y, classnames)
-
-print multiclass_log_loss(y, y_pred2)
+    print multiclass_log_loss(y, y_pred2)
