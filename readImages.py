@@ -1,25 +1,41 @@
+from skimage.io import imread
+from skimage.transform import resize
+import os
+import numpy as np
 
 class ImageReader:
 
     def __init__(self, directory_names):
         self.directory_names=directory_names
+        self.numberofImages = 0
+        self.maxPixel = 25
 
-    def readimages(self):
-        #Rescale the images and create the combined metrics and training labels
-        #get the total training images
-        numberofImages = 0
+    def deriveNumberOfImages(self):
+        #loops through the training categories to find the number of images
         for folder in self.directory_names:
             for fileNameDir in os.walk(folder):
                 for fileName in fileNameDir[2]:
                      # Only read in the images
                     if fileName[-4:] != ".jpg":
                       continue
-                    numberofImages += 1
+                    self.numberofImages += 1
 
-        # We'll rescale the images to be 25x25
-        maxPixel = 25
-        imageSize = maxPixel * maxPixel
-        num_rows = numberofImages # one row for each image in the training dataset
+    def setMaxPixel(self, pixelSize):
+        self.maxPixel=pixelSize
+
+    def getMaxPixel(self):
+        return self.maxPixel
+
+    def setNumberOfImages(self, numberOfImages):
+        self.numberofImages=numberOfImages
+
+    def getNumberOfImages(self):
+        return self.numberofImages
+
+    def readimages(self):
+        #Rescale the images and create the combined metrics and training labels
+        imageSize = self.maxPixel * self.maxPixel
+        num_rows = self.numberofImages # one row for each image in the training dataset
         num_features = imageSize + 3 # for our ratio
 
         # X is the feature vector with one row of features per image
@@ -37,7 +53,7 @@ class ImageReader:
 
         print "Reading images"
         # Navigate through the list of directories
-        for folder in directory_names:
+        for folder in self.directory_names:
             # Append the string class name for each class
             currentClass = folder.split(os.pathsep)[-1]
             namesClasses.append(currentClass)
@@ -52,7 +68,7 @@ class ImageReader:
                     image = imread(nameFileImage, as_grey=True)
                     files.append(nameFileImage)
                     (axisratio, width, height) = getMinorMajorRatio(image)
-                    image = resize(image, (maxPixel, maxPixel))
+                    image = resize(image, (self.maxPixel, self.maxPixel))
 
                     # Store the rescaled image pixels and the axis ratio
                     X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
