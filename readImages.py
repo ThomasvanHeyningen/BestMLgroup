@@ -26,6 +26,9 @@ class ImageReader:
     def getMaxPixel(self):
         return self.maxPixel
 
+    def getImageSize(self):
+        return self.maxPixel*self.maxPixel
+
     def setNumberOfImages(self, numberOfImages):
         self.numberofImages=numberOfImages
 
