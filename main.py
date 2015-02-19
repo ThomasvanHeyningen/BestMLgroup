@@ -18,6 +18,7 @@ from skimage import measure
 from skimage import morphology
 import numpy as np
 import pandas as pd
+import multiclass_log_loss
 from scipy import ndimage
 from skimage.feature import peak_local_max
 
@@ -212,33 +213,6 @@ def trainclf(X, y, namesClasses):
     print np.mean(scores)
     return(y_pred, y_pred2)
 
-def multiclass_log_loss(y_true, y_pred, eps=1e-15):
-    """Multi class version of Logarithmic Loss metric.
-    https://www.kaggle.com/wiki/MultiClassLogLoss
-
-    Parameters
-    ----------
-    y_true : array, shape = [n_samples]
-            true class, intergers in [0, n_classes - 1)
-    y_pred : array, shape = [n_samples, n_classes]
-
-    Returns
-    -------
-    loss : float
-    """
-    predictions = np.clip(y_pred, eps, 1 - eps)
-
-    # normalize row sums to 1
-    predictions /= predictions.sum(axis=1)[:, np.newaxis]
-
-    actual = np.zeros(y_pred.shape)
-    n_samples = actual.shape[0]
-    actual[np.arange(n_samples), y_true.astype(int)] = 1
-    vectsum = np.sum(actual * np.log(predictions))
-    loss = -1.0 / n_samples * vectsum
-    return loss
-
-
 
 #maincode
 if __name__ == '__main__':
@@ -248,5 +222,5 @@ if __name__ == '__main__':
 
     (X,y,classnames,num_features) = readimages()
     (y_pred, y_pred2) = trainclf(X, y, classnames)
-
-    print multiclass_log_loss(y, y_pred2)
+    score=multiclass_log_loss.MulticlassLogLoss()
+    print score.calculate_log_loss(y, y_pred2)
