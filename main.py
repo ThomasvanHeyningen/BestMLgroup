@@ -119,7 +119,8 @@ if __name__ == '__main__':
 
     imageReader=readImages.ImageReader(directory_names)
     (X,y,classnames) = imageReader.read()
-    featureExtractor=featureExtraction.featureExtractor()
+
+    featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
     X = featureExtractor.extract(X)
 
     (y_pred, y_pred2) = trainclf(X, y, classnames)

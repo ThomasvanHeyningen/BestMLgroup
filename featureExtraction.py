@@ -4,9 +4,10 @@ import numpy as np
 
 class featureExtractor():
 
-    def __init__(self):
-        self.null=0
-
+    def __init__(self, maxPixel, numberOfImages):
+        self.maxPixel=maxPixel
+        self.imageSize=maxPixel*maxPixel
+        self.numberOfImages=numberOfImages
 
     def getLargestRegion(self, props, labelmap, imagethres):
     # find the largest nonzero region
@@ -50,8 +51,13 @@ class featureExtractor():
 
 
     def extract(self, images):
-        X= np.zeros((num_rows, imageSize), dtype=float)
-        (axisratio, width, height) = getMinorMajorRatio(image)
-            X[i, imageSize+0] = axisratio
-            X[i, imageSize+1] = height # this might not be good
-            X[i, imageSize+2] = width# this might not be good
+        numberOfFeatures=3
+        X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
+
+        for i in range(0,self.numberOfImages):
+            X[i, 0:self.imageSize] = images[i]
+            image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
+            (axisratio, width, height) = self.getMinorMajorRatio(image)
+            X[i, self.imageSize+0] = axisratio
+            X[i, self.imageSize+1] = height # this might not be good
+            X[i, self.imageSize+2] = width# this might not be good
