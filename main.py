@@ -1,4 +1,4 @@
-__author__ = 'Plankton'
+__author__ = ''
 
 #Import libraries for doing image analysis
 from skimage.io import imread
@@ -23,10 +23,6 @@ from skimage.feature import peak_local_max
 
 import warnings
 warnings.filterwarnings("ignore")
-
-# get the classnames from the directory structure
-directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
- ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
 
 def exampleimage():
     # Example image
@@ -159,8 +155,8 @@ def readimages():
                 # Store the rescaled image pixels and the axis ratio
                 X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
                 X[i, imageSize+0] = axisratio
-                X[i, imageSize+1] = height # this might not be good
-                X[i, imageSize+2] = width# this might not be good
+                #X[i, imageSize+1] = height # this might not be good
+                #X[i, imageSize+2] = width# this might not be good
 
                 # Store the classlabel
                 y[i] = label
@@ -245,6 +241,11 @@ def multiclass_log_loss(y_true, y_pred, eps=1e-15):
 
 
 #maincode
+
+# get the classnames from the directory structure
+directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
+ ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
+
 (X,y,classnames,num_features) = readimages()
 (y_pred, y_pred2) = trainclf(X, y, classnames)
 
