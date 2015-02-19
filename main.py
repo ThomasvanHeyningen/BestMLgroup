@@ -155,6 +155,10 @@ if __name__ == '__main__':
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
 
     (X,y,classnames,num_features) = readimages()
+    (axisratio, width, height) = getMinorMajorRatio(image)
+                        X[i, imageSize+0] = axisratio
+                    X[i, imageSize+1] = height # this might not be good
+                    X[i, imageSize+2] = width# this might not be good
     (y_pred, y_pred2) = trainclf(X, y, classnames)
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_pred2)
