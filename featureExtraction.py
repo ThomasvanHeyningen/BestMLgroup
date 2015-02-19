@@ -61,3 +61,4 @@ class featureExtractor():
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
             X[i, self.imageSize+2] = width# this might not be good
+        return X
