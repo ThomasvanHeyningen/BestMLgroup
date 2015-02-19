@@ -32,7 +32,7 @@ class ImageReader:
     def getNumberOfImages(self):
         return self.numberofImages
 
-    def readimages(self):
+    def read(self):
 
         #get the number of images first, we can later change this to allow the number to be given for quicker running.
         self.deriveNumberOfImages()

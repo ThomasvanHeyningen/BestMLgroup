@@ -18,9 +18,12 @@ from skimage import measure
 from skimage import morphology
 import numpy as np
 import pandas as pd
-import multiclass_log_loss
 from scipy import ndimage
 from skimage.feature import peak_local_max
+
+#imports van eigen classes
+import multiclass_log_loss
+import readImages
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -154,7 +157,8 @@ if __name__ == '__main__':
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
 
-    (X,y,classnames,num_features) = readimages()
+    imageReader=readImages.ImageReader(directory_names)
+    (X,y,classnames) = imageReader.read()
     (axisratio, width, height) = getMinorMajorRatio(image)
                         X[i, imageSize+0] = axisratio
                     X[i, imageSize+1] = height # this might not be good
