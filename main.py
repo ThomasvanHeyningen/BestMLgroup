@@ -1,7 +1,6 @@
 __author__ = ''
 
 #Import libraries for doing image analysis
-from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier as RF
 import glob
 import os
@@ -9,9 +8,6 @@ from sklearn import cross_validation
 from sklearn.cross_validation import StratifiedKFold as KFold
 from sklearn.metrics import classification_report
 from matplotlib import pyplot as plt
-from pylab import cm
-from skimage import measure
-from skimage import morphology
 import numpy as np
 import pandas as pd
 
