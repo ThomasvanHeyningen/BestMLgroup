@@ -24,44 +24,6 @@ import featureExtraction
 import warnings
 warnings.filterwarnings("ignore")
 
-def exampleimage():
-    # Example image
-    # This example was chosen for because it has two noncontinguous pieces
-    # that will make the segmentation example more illustrative
-    example_file = glob.glob(os.path.join(directory_names[5], "*.jpg"))[9]
-    print example_file
-    im = imread(example_file, as_grey=True)
-    plt.imshow(im, cmap=cm.gray)
-    plt.show()
-
-    # First we threshold the image by only taking values greater than the mean to reduce noise in the image
-    # to use later as a mask
-    f = plt.figure(figsize=(12,3))
-    imthr = im.copy()
-    imthr = np.where(im > np.mean(im),0.,1.0)
-    sub1 = plt.subplot(1,4,1)
-    plt.imshow(im, cmap=cm.gray)
-    sub1.set_title("Original Image")
-
-    sub2 = plt.subplot(1,4,2)
-    plt.imshow(imthr, cmap=cm.gray_r)
-    sub2.set_title("Thresholded Image")
-
-    imdilated = morphology.dilation(imthr, np.ones((4,4)))
-    sub3 = plt.subplot(1, 4, 3)
-    plt.imshow(imdilated, cmap=cm.gray_r)
-    sub3.set_title("Dilated Image")
-
-    labels = measure.label(imdilated)
-    labels = imthr*labels
-    labels = labels.astype(int)
-    sub4 = plt.subplot(1, 4, 4)
-    sub4.set_title("Labeled Image")
-    plt.imshow(labels)
-
-    # calculate common region properties for each region within the segmentation
-    regions = measure.regionprops(labels)
-
 def makeplots(X, y, namesClasses, num_features):
     # Loop through the classes two at a time and compare their distributions of the Width/Length Ratio
 
