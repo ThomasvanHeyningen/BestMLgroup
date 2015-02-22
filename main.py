@@ -12,6 +12,7 @@ import pandas as pd
 import multiclass_log_loss
 import readImages
 import featureExtraction
+import prediction
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -55,6 +56,8 @@ if __name__ == '__main__':
     featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
     X = featureExtractor.extract(images)
 
-    (y_pred, y_pred2) = trainclf(X, y, classnames)
+    predictor=prediction.predictor(5,100) # n_folds, n_estimators
+    (y_pred, y_prob) = predictor.trainclf(X, y, classnames)
+
     score=multiclass_log_loss.MulticlassLogLoss()
-    print score.calculate_log_loss(y, y_pred2)
+    print score.calculate_log_loss(y, y_prob)
