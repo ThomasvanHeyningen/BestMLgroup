@@ -28,3 +28,4 @@ class predictor():
         print "Accuracy of all classes"
         print np.mean(scores)
         return(y_pred, y_prob)
+
