@@ -10,9 +10,14 @@ import multiclass_log_loss
 import readImages
 import featureExtraction
 import prediction
+import ConfigFileReader
 
 import warnings
 warnings.filterwarnings("ignore")
+
+#Voorbeeld voor config!
+#C = ConfigFileReader.ConfigFileReader()
+#print (C.getVariable("ClassicClassifier", "name"))
 
 if __name__ == '__main__':
     # get the classnames from the directory structure
@@ -30,3 +35,5 @@ if __name__ == '__main__':
 
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_prob)
+
+
