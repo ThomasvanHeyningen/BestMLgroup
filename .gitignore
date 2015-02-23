@@ -1,0 +1,5 @@
+*.pyc
+.idea/
+
+CNN/networks
+CNN/networks/*
