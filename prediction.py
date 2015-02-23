@@ -24,7 +24,7 @@ class predictor():
             y_pred[test] = clf.predict(X_test)
             y_prob[test] = clf.predict_proba(X_test)
         print classification_report(y, y_pred, target_names=namesClasses)
-        scores = cross_validation.cross_val_score(clf, X, y, self.n_folds, n_jobs=1);
+        scores = cross_validation.cross_val_score(clf, X, y, cv=self.n_folds, n_jobs=1);
         print "Accuracy of all classes"
         print np.mean(scores)
         return(y_pred, y_prob)
