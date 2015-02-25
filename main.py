@@ -1,7 +1,6 @@
 __author__ = ''
 
 #Import libraries for doing image analysis
-import glob
 import os
 
 
@@ -20,10 +19,14 @@ warnings.filterwarnings("ignore")
 #print (C.getVariable("ClassicClassifier", "name"))
 
 if __name__ == '__main__':
-    # get the classnames from the directory structure
-    directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
-    ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
-
+    # training data has to be in the folder "../train"
+    # e.g.      ../X/Y/BestMLgroup/main.py
+    #           ../X/Y/train/acantharia_protist [etc.]
+    train_dir = os.path.join("..","train")
+    # get the classnames from the directory structure    
+    directory_names = [os.path.join(train_dir,class_name)\
+        for class_name in os.listdir(train_dir)]
+    
     imageReader=readImages.ImageReader(directory_names)
     (images,y,classnames) = imageReader.read()
 
