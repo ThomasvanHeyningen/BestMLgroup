@@ -58,7 +58,9 @@ class featureExtractor():
             X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
             (axisratio, width, height) = self.getMinorMajorRatio(image)
+            #(newfeature) = function(image)
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
             X[i, self.imageSize+2] = width# this might not be good
+            #X[i, self.imageSize+3] = newfeature
         return X
