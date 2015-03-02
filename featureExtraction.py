@@ -75,5 +75,6 @@ class featureExtractor():
             X[i, self.imageSize+6] = perimeter
             X[i, self.imageSize+7] = circularity
             X[i, self.imageSize+8] = euler
+            X[i, self.imageSize+9] = area
             #X[i, self.imageSize+3] = newfeature
         return X
