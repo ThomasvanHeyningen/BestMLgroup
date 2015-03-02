@@ -42,12 +42,19 @@ class featureExtractor():
         ratio = 0.0
         width = 0.0
         height = 0.0
+        area =0.0
         if ((not maxregion is None) and  (maxregion.major_axis_length != 0.0)):
             ratio = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0 / maxregion.major_axis_length
             width = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0
             height = 0.0 if maxregion is None else  1.0*maxregion.major_axis_length
-            #there's a chance that width and height are the wrong way around.
-        return ratio, width, height
+            (centroidrow,centroidcol) = 0.0 if maxregion is None else  1.0*maxregion.centroid
+            convex_area = 0.0 if maxregion is None else  1.0*maxregion.convex_area
+            area = 0.0 if maxregion is None else  1.0*maxregion.area
+            perimeter = 0.0 if maxregion is None else  1.0*maxregion.perimeter
+            euler = 0.0 if maxregion is None else  1.0*maxregion.euler_number
+            if (maxregion.perimeter != 0.0):
+                circularity = (12.5663706*area)/(perimeter*perimeter)
+        return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler
 
 
     def extract(self, images):
@@ -57,10 +64,16 @@ class featureExtractor():
         for i in range(0,self.numberOfImages):
             X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
-            (axisratio, width, height) = self.getMinorMajorRatio(image)
+            (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = self.getMinorMajorRatio(image)
             #(newfeature) = function(image)
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
             X[i, self.imageSize+2] = width# this might not be good
+            X[i, self.imageSize+3] = centroidrow
+            X[i, self.imageSize+4] = centroidcol
+            X[i, self.imageSize+5] = convex_area
+            X[i, self.imageSize+6] = perimeter
+            X[i, self.imageSize+7] = circularity
+            X[i, self.imageSize+8] = euler
             #X[i, self.imageSize+3] = newfeature
         return X
