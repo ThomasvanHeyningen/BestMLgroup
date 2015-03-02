@@ -42,12 +42,20 @@ class featureExtractor():
         ratio = 0.0
         width = 0.0
         height = 0.0
-        area =0.0
+        centroidrow = 0.0
+        centroidcol = 0.0
+        convex_area = 0.0
+        area= 0.0
+        perimeter = 0.0
+        euler = 0.0
+        circularity = 0.0
         if ((not maxregion is None) and  (maxregion.major_axis_length != 0.0)):
             ratio = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0 / maxregion.major_axis_length
             width = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0
             height = 0.0 if maxregion is None else  1.0*maxregion.major_axis_length
-            (centroidrow,centroidcol) = 0.0 if maxregion is None else  1.0*maxregion.centroid
+            (centroidrow,centroidcol) = (0.0,0.0) if maxregion is None else maxregion.centroid
+            centroidrow=centroidrow*1.0
+            centroidcol=centroidcol*1.0
             convex_area = 0.0 if maxregion is None else  1.0*maxregion.convex_area
             area = 0.0 if maxregion is None else  1.0*maxregion.area
             perimeter = 0.0 if maxregion is None else  1.0*maxregion.perimeter
@@ -58,7 +66,7 @@ class featureExtractor():
 
 
     def extract(self, images):
-        numberOfFeatures=3
+        numberOfFeatures=10
         X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
 
         for i in range(0,self.numberOfImages):
