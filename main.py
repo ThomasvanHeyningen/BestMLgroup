@@ -12,6 +12,7 @@ import readImages
 import featureExtraction
 import prediction
 import submission
+import re
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -21,6 +22,10 @@ if __name__ == '__main__':
     # get the classnames from the directory structure
     debug=True
     test=True
+    nameFileImage="..\\test\\test\image.jpg"
+    print nameFileImage
+    imageName=re.sub('\.\.\\\\test\\\\test\\\\', "", nameFileImage)
+    print imageName
 
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
@@ -31,7 +36,7 @@ if __name__ == '__main__':
         test_directory=glob.glob(os.path.join("..", "smalltestset"))
 
     imageReader=readImages.ImageReader(directory_names)
-    (images,y,classnames) = imageReader.read()
+    (images,y,classnames, namesfortest) = imageReader.read()
 
     print "extracting features"
     featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
@@ -55,7 +60,7 @@ if __name__ == '__main__':
         featureExtractor=featureExtraction.featureExtractor(testImageReader.getMaxPixel(), testImageReader.getNumberOfImages())
         testset = featureExtractor.extract(testimages)
 
-        imageTester=submission.Tester(clf, classnames)
+        imageTester=submission.Tester(clf, namesfortest)
         imageTester.test(testset, imagefilenames)
     print("--- execution took %s seconds ---" % (time.time() - start_time))
 

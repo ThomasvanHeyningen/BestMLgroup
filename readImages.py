@@ -2,6 +2,7 @@ from skimage.io import imread
 from skimage.transform import resize
 import os
 import numpy as np
+import re
 
 class ImageReader:
 
@@ -56,12 +57,15 @@ class ImageReader:
         label = 0
         # List of string of class names
         namesClasses = list()
+        classnames = list()
 
         print "Reading images"
         # Navigate through the list of directories
         for folder in self.directory_names:
             # Append the string class name for each class
             currentClass = folder.split(os.pathsep)[-1]
+            className=re.sub('\.\.\\\\train\\\\', "", currentClass)
+            classnames.append(className)
             namesClasses.append(currentClass)
             for fileNameDir in os.walk(folder):
                 for fileName in fileNameDir[2]:
@@ -85,7 +89,7 @@ class ImageReader:
                     report = [int((j+1)*num_rows/20.) for j in range(20)]
                     if i in report: print np.ceil(i *100.0 / num_rows), "% done"
             label += 1
-        return (X,y,namesClasses)
+        return (X,y,namesClasses,classnames)
 
     def readtest(self):
 
@@ -124,8 +128,8 @@ class ImageReader:
 
                     # Read in the images and create the features
                     nameFileImage = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
-                    namesFiles.append(nameFileImage)
-
+                    imageName=re.sub('\.\.\\\\test\\\\test\\\\', "", nameFileImage)
+                    namesFiles.append(imageName)
                     image = imread(nameFileImage, as_grey=True)
                     files.append(nameFileImage)
                     image = resize(image, (self.maxPixel, self.maxPixel))
