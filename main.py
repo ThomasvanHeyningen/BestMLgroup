@@ -17,9 +17,10 @@ import warnings
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
+    start_time = time.time()
     # get the classnames from the directory structure
-    debug=False
-    test=False
+    debug=True
+    test=True
 
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
@@ -56,4 +57,5 @@ if __name__ == '__main__':
 
         imageTester=submission.Tester(clf, classnames)
         imageTester.test(testset, imagefilenames)
+    print("--- execution took %s seconds ---" % (time.time() - start_time))
 
