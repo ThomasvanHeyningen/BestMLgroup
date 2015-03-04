@@ -27,5 +27,5 @@ class predictor():
         scores = cross_validation.cross_val_score(clf, X, y, cv=self.n_folds, n_jobs=1);
         print "Accuracy of all classes"
         print np.mean(scores)
-        return(y_pred, y_prob)
+        return(y_pred, y_prob, clf)
 
