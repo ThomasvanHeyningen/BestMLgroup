@@ -45,13 +45,13 @@ function trainUnsup(module)
     local err = 0
     local iter = 0
     
-    for t = 1,globals.maxIter,globals.batchSize do
+    for t = 1,globals.epochSize,globals.batchSize do
         iter = iter+1
         xlua.progress(iter, globals.statinterval) 
         --------------------------------------------------------------------
         -- create mini-batch
         -- 
-        local inputs, targets = load_data.getBatch(batchSize, false)
+        local inputs, targets = load_data.getBatch(globals.batchSize, false)
         --------------------------------------------------------------------
         -- define eval closure
         -- 
@@ -76,8 +76,8 @@ function trainUnsup(module)
         --------------------------------------------------------------------
         -- one SGD step
         -- 
-        sgdconf = sgdconf or {learningRate = globals.eta,
-        learningRateDecay = globals.etadecay,
+        sgdconf = sgdconf or {learningRate = globals.learningrate,
+        learningRateDecay = globals.decay,
         learningRates = etas,
         momentum = globals.momentum}
         _,fs = optim.sgd(feval, x, sgdconf)

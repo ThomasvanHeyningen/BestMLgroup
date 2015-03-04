@@ -4,7 +4,7 @@ require 'globals'
 
 -- Parameters
 local nclasses  = 1
-local nchannels = {1, 4, 4, 32, nclasses}
+local nchannels = {3, 4, 4, 32, nclasses}
 local fanIn     = {1} -- #Maps in previous layer to connect to
 local kernSize  = {9} -- Eye width and height
 local P         = 2   -- Pooling agression, 1 = mean, inf = max
@@ -49,7 +49,7 @@ function addClassifier(model)
     -- Append a two-layer NN
     
     -- Flatten Layer 3
-    local length = nchannels[2] * dims[3][1] * dims[3][2]
+    local length = nchannels[3] * dims[3][1] * dims[3][2]
     model:add(nn.Reshape(length))
     model:add(nn.Linear(length, nchannels[3])) -- Layer 4
     model:add(nn.Tanh())

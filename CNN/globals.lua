@@ -15,12 +15,12 @@ local pruneNr      = 3
 local retrain      = 'none'
 local batchSize    = 1
 local progressBar  = true
-local epochSize    = 798
+local epochSize    = 8000
 local maxIter      = 2000
 local learningrate = 2e-3
 local decay        = 1e-5
 local momentum     = 0.0
-local statinterval = 100
+local statinterval = 500
 
 local function isImgFile(str)
     return string.find(str, '.jpg') or string.find(str, '.JPG')
