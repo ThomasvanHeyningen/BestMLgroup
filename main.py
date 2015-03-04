@@ -40,7 +40,7 @@ if __name__ == '__main__':
     predictor=prediction.predictor(5,100) # n_folds, n_estimators
     (y_pred, y_prob, clf) = predictor.trainclf(X, y, classnames)
 
-    if !test:
+    if not test:
         print "calculating scores"
         score=multiclass_log_loss.MulticlassLogLoss()
         print score.calculate_log_loss(y, y_prob)
