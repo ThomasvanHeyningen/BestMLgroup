@@ -40,15 +40,17 @@ if __name__ == '__main__':
     predictor=prediction.predictor(5,100) # n_folds, n_estimators
     (y_pred, y_prob, clf) = predictor.trainclf(X, y, classnames)
 
-    print "calculating scores"
-    score=multiclass_log_loss.MulticlassLogLoss()
-    print score.calculate_log_loss(y, y_prob)
+    if !test:
+        print "calculating scores"
+        score=multiclass_log_loss.MulticlassLogLoss()
+        print score.calculate_log_loss(y, y_prob)
 
     if test:
+        print "loading images for test set"
         testImageReader=readImages.ImageReader(test_directory)
         (testimages, imagefilenames) = testImageReader.readtest()
 
-        print "extracting features"
+        print "extracting features for test set"
         featureExtractor=featureExtraction.featureExtractor(testImageReader.getMaxPixel(), testImageReader.getNumberOfImages())
         testset = featureExtractor.extract(testimages)
 
