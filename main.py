@@ -29,12 +29,14 @@ if __name__ == '__main__':
     imageReader=readImages.ImageReader(directory_names)
     (images,y,classnames) = imageReader.read()
 
+    print "extracting features"
     featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
     X = featureExtractor.extract(images)
 
+    print "training classifier"
     predictor=prediction.predictor(5,100) # n_folds, n_estimators
     (y_pred, y_prob) = predictor.trainclf(X, y, classnames)
-
+    print "calculating scores"
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_prob)
 
