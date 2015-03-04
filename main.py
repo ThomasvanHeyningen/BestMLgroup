@@ -40,4 +40,3 @@ if __name__ == '__main__':
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_prob)
 
-

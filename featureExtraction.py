@@ -1,6 +1,8 @@
 from skimage import measure
 from skimage import morphology
 import numpy as np
+import csv
+import os
 
 class featureExtractor():
 
@@ -86,3 +88,7 @@ class featureExtractor():
             X[i, self.imageSize+9] = area
             #X[i, self.imageSize+3] = newfeature
         return X
+
+    def getCNNfeatures(self):
+        
+
