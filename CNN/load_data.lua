@@ -11,18 +11,14 @@ local lblList  = {}
 local fileList = {}
 local labeled  = true
 
-for file in lfs.dir(dataDir) do
-    if globals.isImgFile(file) then
-        table.insert(fileList, file)
+for dir in lfs.dir(dataDir) do
+    if globals.isDir(dir) then
+        for file in lfs.dir(dataDir .. dir) do
+            if globals.isImgFile(file) then
+                table.insert(fileList, {dir,file})
+            end
+        end
     end
-end
-
-local openfile = io.open(globals.lblfile)
-for row in openfile:lines() do
-    pair = string.split(row, ',')
-    key = pair[1] -- Filename
-    val = pair[2] -- Label
-    lblDict[key] = val
 end
 
 local function preprocess(data)
@@ -31,9 +27,6 @@ local function preprocess(data)
     local len = #data
     if type(len) ~= 'number' then 
         len = len[1]
-    end
-    for i = 1, len do
-	data[i] = image.rgb2yuv(data[i])
     end
     return data
 end
@@ -46,17 +39,16 @@ local function getData(files, tensor)
         local data = {}
     end
     for i, file in ipairs(files) do
-        v = image.load(dataDir .. file):transpose(2,3)
+        file, lbl = table.splice(file,1)
+        file = file[1]; lbl = lbl[1]
+        v = image.load(dataDir .. lbl .. '/' .. file):transpose(2,3)
         if tensor then
-            v = torch.reshape(v, 3, imgW, imgH, 1)
+            v = torch.reshape(v, 1, imgW, imgH, 1)
         else
-            v = torch.reshape(v, 3, imgW, imgH)
+            v = torch.reshape(v, 1, imgW, imgH)
         end
         data[i] = v
-    end
-    -- List labels such that lblList[i] corresponds to data[i]
-    for i, file in ipairs(files) do
-        lblList[i] = lblDict[file]
+        lblList[i] = lbl
     end
     return data
 end

@@ -1,8 +1,8 @@
 require 'nn'
 
 local imgSize = {50,50}
-local dataDir = '/home/harmen/Programming/neural_net/data/'
-local mainDir = '/home/harmen/Programming/neural_net/'
+local dataDir = '/home/harmen/Programming/BestMLgroup/data/train/'
+local mainDir = '/home/harmen/Programming/BestMLgroup/CNN'
 local clsfDir = mainDir .. 'classifier/'
 local saveDir = clsfDir
 
@@ -25,6 +25,9 @@ local statinterval = 100
 local function isImgFile(str)
     return string.find(str, '.jpg') or string.find(str, '.JPG')
 end
+local function isDir(str)
+    return not string.find(str, '%.')
+end
 
 globals = {}
 globals.imgSize = imgSize
@@ -36,6 +39,7 @@ globals.saveDir = saveDir
 globals.currentNet   = currentNet
 globals.lblfile      = lblfile
 globals.isImgFile    = isImgFile
+globals.isDir        = isDir
 globals.pruneData    = pruneData
 globals.pruneNr      = pruneNr
 globals.retrain      = retrain

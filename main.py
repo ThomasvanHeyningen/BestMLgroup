@@ -19,10 +19,9 @@ warnings.filterwarnings("ignore")
 #print (C.getVariable("ClassicClassifier", "name"))
 
 if __name__ == '__main__':
-    # training data has to be in the folder "../train"
-    # e.g.      ../X/Y/BestMLgroup/main.py
-    #           ../X/Y/train/acantharia_protist [etc.]
-    train_dir = os.path.join("..","train")
+    C = ConfigFileReader.ConfigFileReader()
+    # Training data is located according to configFile.ini
+    train_dir = os.path.join(os.getcwd(), C.getVariable("Directories", "train"))
     # get the classnames from the directory structure    
     directory_names = [os.path.join(train_dir,class_name)\
         for class_name in os.listdir(train_dir)]

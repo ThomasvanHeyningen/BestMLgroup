@@ -4,7 +4,7 @@ require 'globals'
 
 -- Parameters
 local nclasses  = 1
-local nchannels = {3, 4, 4, 32, nclasses}
+local nchannels = {1, 4, 4, 32, nclasses}
 local fanIn     = {1} -- #Maps in previous layer to connect to
 local kernSize  = {9} -- Eye width and height
 local P         = 2   -- Pooling agression, 1 = mean, inf = max
