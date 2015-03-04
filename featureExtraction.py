@@ -64,15 +64,21 @@ class featureExtractor():
                 circularity = (12.5663706*area)/(perimeter*perimeter)
         return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler
 
+    def getBwRatio(self, image):
+        image = image.copy()
+        bwmean = sum(image) / len(image)        
+        return bwmean
 
     def extract(self, images):
-        numberOfFeatures=10
+        numberOfFeatures=11
         X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
 
         for i in range(0,self.numberOfImages):
             X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
             (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = self.getMinorMajorRatio(image)
+            image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
+            bwmean = self.getBwRatio(image)
             #(newfeature) = function(image)
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
@@ -84,5 +90,6 @@ class featureExtractor():
             X[i, self.imageSize+7] = circularity
             X[i, self.imageSize+8] = euler
             X[i, self.imageSize+9] = area
+            X[i, self.imageSize+10] = bwmean
             #X[i, self.imageSize+3] = newfeature
         return X
