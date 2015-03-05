@@ -1,4 +1,5 @@
 *.pyc
+*.csv
 .idea/
 
 CNN/networks
@@ -8,4 +9,3 @@ CNN/classifier
 CNN/classifier/*
 
 data/*
-*.csv
