@@ -21,6 +21,7 @@ if unlabeledSet then
     autoEncoder.beta   = 6.0
     autoEncoder = trainer.train(autoEncoder)
     model = autoEncoder.encoder
+    print(model:getParameters())
     decoder = autoEncoder.decoder
 end
 
@@ -30,5 +31,5 @@ if trainSet then
 end
 
 local today = os.date('_%d_%m_%y')
-torch.save(globals.clsfDir .. 'feature-extractor' .. today .. '.dat', model)
+torch.save(globals.clsfDir .. 'feature_extractor' .. today .. '.dat', model)
 torch.save(globals.clsfDir .. 'decoder'           .. today .. '.dat', decoder)

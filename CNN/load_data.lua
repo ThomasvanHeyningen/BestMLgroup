@@ -48,7 +48,7 @@ local function getData(files, tensor)
             v = torch.reshape(v, 1, imgW, imgH)
         end
         data[i] = v
-        lblList[i] = lbl
+        lblList[i] = file
     end
     return data
 end
@@ -56,21 +56,20 @@ end
 local function getBatch(batchSize, tensor)
     if tensor == nil then tensor = true end
     fileList, batchList = table.splice(fileList, 1, batchSize)
-    lblList,  batchlbls = table.splice(lblList,  1, batchSize)
     
-    if tensor then
-        batch = getData(batchList, true)
-    else
-        batch = getData(batchList, false)
-    end
+    batch = getData(batchList, tensor)
     batch = preprocess(batch)
     if labeled then
-        lbls = torch.Tensor(lblList)
+        lblList,  batchlbls = table.splice(lblList,  1, batchSize)
         return batch, batchlbls
     else
         return batch, batch
     end
-    
+end
+
+local function getAll(tensor)
+    if tensor == nil then tensor = true end
+    return getBatch(#fileList, tensor)
 end
 
 local function setLabeled(state)
@@ -102,4 +101,5 @@ load_data = {}
 load_data.get = get
 load_data.getBatch = getBatch
 load_data.setLabeled = setLabeled
+load_data.getAll = getAll
 return load_data
