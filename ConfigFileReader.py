@@ -20,5 +20,4 @@ class ConfigFileReader:
 	    return dict1
 
 	def getVariable(self, section, variable):
-		return (self.ConfigSectionMap(section)[variable])
-
+		return (self.ConfigSectionMap(section)[variable.lower()])

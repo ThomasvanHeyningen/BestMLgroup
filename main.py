@@ -3,6 +3,7 @@ __author__ = ''
 #Import libraries for doing image analysis
 import os
 
+import numpy as np
 
 #imports van eigen classes
 import multiclass_log_loss
@@ -31,7 +32,11 @@ if __name__ == '__main__':
 
     print "extracting features"
     featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
-    X = featureExtractor.extract(images)
+    X  = featureExtractor.extract(images)
+    X2 = featureExtractor.getCNNfeatures(imageReader.files)
+    X = np.hstack([X,X2])
+
+    print(sum(X2[0]))
 
     print "training classifier"
     predictor=prediction.predictor(5,100) # n_folds, n_estimators
@@ -39,4 +44,3 @@ if __name__ == '__main__':
     print "calculating scores"
     score=multiclass_log_loss.MulticlassLogLoss()
     print score.calculate_log_loss(y, y_prob)
-

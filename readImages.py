@@ -2,6 +2,7 @@ from skimage.io import imread
 from skimage.transform import resize
 import os
 import numpy as np
+import ConfigFileReader
 
 class ImageReader:
 
@@ -9,6 +10,7 @@ class ImageReader:
         self.directory_names=directory_names
         self.numberofImages = 0
         self.maxPixel = 25
+        self.C = ConfigFileReader.ConfigFileReader()
 
     def deriveNumberOfImages(self):
         #loops through the training categories to find the number of images
@@ -16,9 +18,8 @@ class ImageReader:
             for fileNameDir in os.walk(folder):
                 for fileName in fileNameDir[2]:
                      # Only read in the images
-                    if fileName[-4:] != ".jpg":
-                      continue
-                    self.numberofImages += 1
+                    if fileName[-4:] == ".jpg":
+                      self.numberofImages += 1
 
     def setMaxPixel(self, pixelSize):
         self.maxPixel=pixelSize
@@ -50,7 +51,7 @@ class ImageReader:
         # y is the numeric class label
         y = np.zeros((num_rows))
 
-        files = []
+        self.files = []
         # Generate training data
         i = 0
         label = 0
@@ -72,7 +73,7 @@ class ImageReader:
                     # Read in the images and create the features
                     nameFileImage = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
                     image = imread(nameFileImage, as_grey=True)
-                    files.append(nameFileImage)
+                    self.files.append(nameFileImage)
                     image = resize(image, (self.maxPixel, self.maxPixel))
 
                     # Store the rescaled image pixels and the axis ratio
@@ -83,6 +84,7 @@ class ImageReader:
                     i += 1
                     # report progress for each 5% done
                     report = [int((j+1)*num_rows/20.) for j in range(20)]
-                    if i in report: print np.ceil(i *100.0 / num_rows), "% done"
+                    if i in report:
+                        print np.ceil(i *100.0 / num_rows), "% done"
             label += 1
         return (X,y,namesClasses)

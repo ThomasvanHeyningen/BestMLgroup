@@ -3,6 +3,7 @@ from skimage import morphology
 import numpy as np
 import csv
 import os
+import ConfigFileReader
 
 class featureExtractor():
 
@@ -51,7 +52,7 @@ class featureExtractor():
         perimeter = 0.0
         euler = 0.0
         circularity = 0.0
-        if ((not maxregion is None) and  (maxregion.major_axis_length != 0.0)):
+        if ((maxregion is not None) and  (maxregion.major_axis_length != 0.0)):
             ratio = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0 / maxregion.major_axis_length
             width = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0
             height = 0.0 if maxregion is None else  1.0*maxregion.major_axis_length
@@ -89,6 +90,21 @@ class featureExtractor():
             #X[i, self.imageSize+3] = newfeature
         return X
 
-    def getCNNfeatures(self):
+    def getCNNfeatures(self, names):
+        C = ConfigFileReader.ConfigFileReader()
+        f_dir  = C.getVariable('Directories', 'CNNdir')
+        f_file = C.getVariable('Directories', 'CNNfeatures')
+        feat_reader = csv.reader(open(os.path.join(f_dir, f_file)), delimiter=',')
         
+        feat_dict = {}
+        for line in feat_reader:
+            name = line[0]
+            feat_dict.update({name: line[1:]})
 
+        nfeatures = len(feat_dict.itervalues().next())
+        features = np.zeros((len(names), nfeatures))
+        for i, name in enumerate(names):
+            name = os.path.split(name)[1]
+            features[i] = feat_dict[name]
+        print(features[i])
+        return features
