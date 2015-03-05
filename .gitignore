@@ -4,4 +4,8 @@
 CNN/networks
 CNN/networks/*
 
+CNN/classifier
+CNN/classifier/*
+
 data/*
+*.csv
