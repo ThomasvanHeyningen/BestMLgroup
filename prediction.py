@@ -12,7 +12,7 @@ class predictor():
         self.n_folds=n_folds
         self.n_estimators=n_estimators
 
-    def trainclf(self, X, y, namesClasses):
+    def trainfoldedclf(self, X, y, namesClasses):
         kf = KFold(y, self.n_folds)
         y_pred = y * 0
         y_prob = np.zeros((len(y),len(set(y))))
@@ -28,4 +28,9 @@ class predictor():
         #print "Accuracy of all classes"
         #print np.mean(scores)
         return(y_pred, y_prob, clf)
+
+    def trainunfoldedclf(self, X, y):
+        clf = RF(self.n_estimators, n_jobs=3)
+        clf.fit(X, y)
+        return(clf)
 
