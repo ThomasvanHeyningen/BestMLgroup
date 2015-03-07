@@ -30,7 +30,6 @@ class featureExtractor():
 
         #Dilate the image
         imdilated = morphology.dilation(imagethr, np.ones((4,4)))
-
         # Create the label list
         label_list = measure.label(imdilated)
         label_list = imagethr*label_list
@@ -91,7 +90,7 @@ class featureExtractor():
             #(newfeature) = function(image)
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
-            X[i, self.imageSize+2] = width# this might not be good
+            X[i, self.imageSize+2] = width# this might not be
             X[i, self.imageSize+3] = centroidrow
             X[i, self.imageSize+4] = centroidcol
             X[i, self.imageSize+5] = convex_area
