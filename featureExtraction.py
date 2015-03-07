@@ -1,6 +1,7 @@
 from skimage import measure
 from skimage import morphology
 import numpy as np
+import math
 
 class featureExtractor():
 
@@ -61,12 +62,17 @@ class featureExtractor():
             perimeter = 0.0 if maxregion is None else  1.0*maxregion.perimeter
             euler = 0.0 if maxregion is None else  1.0*maxregion.euler_number
             if (maxregion.perimeter != 0.0):
-                circularity = (12.5663706*area)/(perimeter*perimeter)
+                circularity = (math.pi*4*area)/(perimeter*perimeter)
         return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler
 
     def getBwRatio(self, image):
         image = image.copy()
-        bwmean = sum(image) / len(image)        
+        bwmean = sum(image) / len(image)
+        '''
+        #Other possible solution disregarding the white background of the image
+        numberOfOnes = (image == 1).sum()
+        bwmean = (sum(image)-numberOfOnes) / (len(image)-numberOfOnes)
+        '''
         return bwmean
 
     def extract(self, images, addImage):
