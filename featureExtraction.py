@@ -69,12 +69,15 @@ class featureExtractor():
         bwmean = sum(image) / len(image)        
         return bwmean
 
-    def extract(self, images):
+    def extract(self, images, addImage):
         numberOfFeatures=11
+        if not addImage:
+            self.imageSize=0
         X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
 
         for i in range(0,self.numberOfImages):
-            X[i, 0:self.imageSize] = images[i]
+            if addImage:
+                X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
             (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = self.getMinorMajorRatio(image)
             image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))

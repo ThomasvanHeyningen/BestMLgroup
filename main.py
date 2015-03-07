@@ -23,6 +23,7 @@ if __name__ == '__main__':
     debug=False
     test=False
     n_estimators=100 # make this higher to improve score (and computing time)
+    addImage=True # adds the image pixels as features.
 
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
@@ -37,7 +38,7 @@ if __name__ == '__main__':
 
     print "extracting features"
     featureExtractor=featureExtraction.featureExtractor(imageReader.getMaxPixel(), imageReader.getNumberOfImages())
-    X = featureExtractor.extract(images)
+    X = featureExtractor.extract(images, addImage)
 
     print "training classifier"
     predictor=prediction.predictor(5,n_estimators) # n_folds, n_estimators
