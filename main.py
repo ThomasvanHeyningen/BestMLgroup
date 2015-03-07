@@ -20,12 +20,8 @@ warnings.filterwarnings("ignore")
 if __name__ == '__main__':
     start_time = time.time()
     # get the classnames from the directory structure
-    debug=True
-    test=True
-    nameFileImage="..\\test\\test\image.jpg"
-    print nameFileImage
-    imageName=re.sub('\.\.\\\\test\\\\test\\\\', "", nameFileImage)
-    print imageName
+    debug=False
+    test=False
 
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
