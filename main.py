@@ -22,6 +22,7 @@ if __name__ == '__main__':
     # get the classnames from the directory structure
     debug=False
     test=False
+    n_estimators=100 # make this higher to improve score (and computing time)
 
     directory_names = list(set(glob.glob(os.path.join("..","train", "*"))\
     ).difference(set(glob.glob(os.path.join("..","train","*.*")))))
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     X = featureExtractor.extract(images)
 
     print "training classifier"
-    predictor=prediction.predictor(5,100) # n_folds, n_estimators
+    predictor=prediction.predictor(5,n_estimators) # n_folds, n_estimators
     (y_pred, y_prob, clf) = predictor.trainclf(X, y, classnames)
 
     if not test:
