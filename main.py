@@ -12,7 +12,6 @@ import readImages
 import featureExtraction
 import prediction
 import submission
-import re
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -20,8 +19,8 @@ warnings.filterwarnings("ignore")
 if __name__ == '__main__':
     start_time = time.time()
     # get the classnames from the directory structure
-    debug=True
-    test=True
+    debug=False
+    test=False
     n_estimators=200 # make this higher to improve score (and computing time)
     addImage=True # adds the image pixels as features.
 
