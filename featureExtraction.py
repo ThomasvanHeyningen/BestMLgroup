@@ -88,6 +88,7 @@ class featureExtractor():
             image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
             bwmean = self.getBwRatio(image)
             #(newfeature) = function(image)
+            #X[i, self.imageSize+3] = newfeature
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
             X[i, self.imageSize+2] = width# this might not be
@@ -99,5 +100,4 @@ class featureExtractor():
             X[i, self.imageSize+8] = euler
             X[i, self.imageSize+9] = area
             X[i, self.imageSize+10] = bwmean
-            #X[i, self.imageSize+3] = newfeature
         return X
