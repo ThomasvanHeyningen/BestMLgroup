@@ -36,8 +36,6 @@ if __name__ == '__main__':
     X2 = featureExtractor.getCNNfeatures(imageReader.files)
     X = np.hstack([X,X2])
 
-    print(sum(X2[0]))
-
     print "training classifier"
     predictor=prediction.predictor(5,100) # n_folds, n_estimators
     (y_pred, y_prob) = predictor.trainclf(X, y, classnames)
