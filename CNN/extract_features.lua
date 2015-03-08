@@ -33,6 +33,7 @@ local function latestModel(model_name)
 end
 
 extractor = torch.load(dir .. (arg[2] or latestModel('feature_extractor_')))
+extractor:evaluate()
 batchSize = 2000
 maxImgs = 30300
 

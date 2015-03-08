@@ -21,7 +21,6 @@ if unlabeledSet then
     autoEncoder.beta   = 6.0
     autoEncoder = trainer.train(autoEncoder)
     model = autoEncoder.encoder
-    print(model:getParameters())
     decoder = autoEncoder.decoder
 end
 
