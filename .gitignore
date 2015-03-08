@@ -3,5 +3,7 @@
 
 CNN/networks
 CNN/networks/*
+CNN/classifier
+CNN/*features*.csv
 
 data/
