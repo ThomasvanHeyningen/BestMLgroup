@@ -6,17 +6,15 @@ require 'trainer'
 net = require(globals.currentNet) -- Rename because the nets have different names
 require 'nn'
 
-load_data.setLabeled(false)
 --unlabeledSet = load_data.get(false)
 --local trainSet = load_data.get(true)
 --local testSet = load_data.get(true)
 
 local model = net.stageOne()
-local decoder
+local decoder = net.stageTwo()
 
 unlabeledSet = true
 if unlabeledSet then
-    decoder = net.stageTwo()
     local autoEncoder = unsup.AutoEncoder(model, decoder)
     autoEncoder.beta   = 6.0
     autoEncoder = trainer.train(autoEncoder)

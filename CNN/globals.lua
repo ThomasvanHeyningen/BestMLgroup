@@ -9,18 +9,18 @@ local saveDir = clsfDir
 -- local netConfigFile = mainDir .. 'net_config.ini'
 lblfile = dataDir .. 'lblfile.csv'
 
-local currentNet   = 'net1'
+local currentNet   = 'net2'
 local pruneData    = true
 local pruneNr      = 3
 local retrain      = 'none'
-local batchSize    = 1
+local batchSize    = 250
 local progressBar  = true
-local epochSize    = 1000
+local epochSize    = 50000
 local maxIter      = 2000
-local learningrate = 2e-3
-local decay        = 1e-5
-local momentum     = 0.0
-local statinterval = 500
+local learningrate = 1e-5
+local decay        = 1e-9
+local momentum     = 0.1
+local statinterval = 3
 
 local function isImgFile(str)
     return string.find(str, '.jpg') or string.find(str, '.JPG')

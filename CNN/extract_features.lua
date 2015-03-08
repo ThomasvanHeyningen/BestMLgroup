@@ -35,15 +35,18 @@ end
 extractor = torch.load(dir .. (arg[2] or latestModel('feature_extractor_')))
 extractor:evaluate()
 batchSize = 2000
-maxImgs = 30300
+maxImgs = 30336
 
 openfile = io.open('features.csv' , 'w') -- Remove previous features
-local n = 1764
+local n = 144
 for b = 1,maxImgs, batchSize do
     print('Parsing imgs ' .. b .. ' to ' .. (b + batchSize))
-    local imgs, lbls = load_data.getBatch(batchSize, false)
-
-    for i = 1,#lbls do
+    if (b + batchSize > maxImgs) then
+        imgs, lbls = load_data.getAll(false, true)
+    else
+        imgs, lbls = load_data.getBatch(batchSize, false, true)
+    end
+    for i = 1, #imgs do
         local feature = extractor:forward(imgs[i])
         feature = torch.reshape(feature, n)
         feature = torch.totable(feature)

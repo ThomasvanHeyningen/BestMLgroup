@@ -5,29 +5,6 @@ require 'load_data'
 require 'nn'
 require 'optim'
 
-local dropouts = globals.dropouts
-
-local function zip(lst)
-    indims = #lst
-    out = {}
-    for i = 1, indims[1] do
-        out[i] = {lst[i][1], lst[i][2]}
-    end
-    return out
-end
-
---[[
-function train(model)
-    imgs = load_data.getBatch(10)
-    criterion = nn.MSECriterion()
-    trainer = nn.StochasticGradient(model, criterion)
-    trainer.learningRate = 0.01
-    data = zip(imgs)
-    function data:size() return #self end
-    trainer:train(data)
-    return model
-end
---]]
 
 function train(model)
     if unsup then
@@ -51,16 +28,19 @@ function trainUnsup(module)
         --------------------------------------------------------------------
         -- create mini-batch
         -- 
-        local inputs, targets = load_data.getBatch(globals.batchSize, false)
+        local inputs = load_data.getBatch(globals.batchSize, true, false)
+        local targets = inputs
+        local n = (#inputs):totable()[1]
         --------------------------------------------------------------------
         -- define eval closure
         -- 
         local feval = function()
+        collectgarbage()
             -- reset gradient/f
             local f = 0
             dl_dx:zero()
             -- estimate f and gradients, for minibatch
-            for i = 1,#inputs do
+            for i = 1,n do
                 -- f
                 f = f + module:updateOutput(inputs[i], targets[i])
                 -- gradients
@@ -68,8 +48,8 @@ function trainUnsup(module)
                 module:accGradParameters(inputs[i], targets[i])
             end
             -- normalize
-            dl_dx:div(#inputs)
-            f = f/#inputs
+            dl_dx:div(n)
+            f = f/n
             -- return f and df/dx
             return f,dl_dx
         end
@@ -83,7 +63,7 @@ function trainUnsup(module)
         _,fs = optim.sgd(feval, x, sgdconf)
         err = err + fs[1]
         -- normalize
-        module:normalize()
+        -- module:normalize()
         --------------------------------------------------------------------
         -- compute statistics / report error
         -- 
