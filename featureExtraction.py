@@ -40,7 +40,7 @@ class featureExtractor():
 
         region_list = measure.regionprops(label_list)
         maxregion = self.getLargestRegion(region_list, label_list, imagethr)
-
+        
         # guard against cases where the segmentation fails by providing zeros
         ratio = 0.0
         width = 0.0
@@ -52,7 +52,10 @@ class featureExtractor():
         perimeter = 0.0
         euler = 0.0
         circularity = 0.0
-        if ((maxregion is not None) and  (maxregion.major_axis_length != 0.0)):
+        solidity = 0.0
+        eccentricity = 0.0
+        rectangularity = 0.0
+        if ((not maxregion is None) and  (maxregion.major_axis_length != 0.0)):
             ratio = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0 / maxregion.major_axis_length
             width = 0.0 if maxregion is None else  maxregion.minor_axis_length*1.0
             height = 0.0 if maxregion is None else  1.0*maxregion.major_axis_length
@@ -65,7 +68,10 @@ class featureExtractor():
             euler = 0.0 if maxregion is None else  1.0*maxregion.euler_number
             if (maxregion.perimeter != 0.0):
                 circularity = (math.pi*4*area)/(perimeter*perimeter)
-        return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler
+            solidity = 0.0 if maxregion is None else area / convex_area
+            eccentricity = 0.0 if maxregion is None else 1.0*maxregion.eccentricity
+            rectangularity = 0.0 if maxregion is None else 1.0*maxregion.extent
+        return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler, solidity, eccentricity, rectangularity
 
     def getBwRatio(self, image):
         image = image.copy()
@@ -78,20 +84,22 @@ class featureExtractor():
         return bwmean
 
     def extract(self, images, addImage):
-        numberOfFeatures=11
+        numberOfFeatures=14
         if not addImage:
             self.imageSize=0
-        X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
+        X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures + 625), dtype=float)
 
         for i in range(0,self.numberOfImages):
             if addImage:
                 X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
-            (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = self.getMinorMajorRatio(image)
+            (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler, solidity, eccentricity, rectangularity) = self.getMinorMajorRatio(image)
+            sob = self.edges(image)
+            r, c = sob.shape
+            sob = np.reshape(sob, (r*c), 1)
             image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
             bwmean = self.getBwRatio(image)
             #(newfeature) = function(image)
-            #X[i, self.imageSize+3] = newfeature
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
             X[i, self.imageSize+2] = width# this might not be
@@ -103,6 +111,10 @@ class featureExtractor():
             X[i, self.imageSize+8] = euler
             X[i, self.imageSize+9] = area
             X[i, self.imageSize+10] = bwmean
+            X[i, self.imageSize+11] = solidity
+            X[i, self.imageSize+12] = eccentricity
+            X[i, self.imageSize+13] = rectangularity
+            X[i, (self.imageSize+numberOfFeatures):(self.imageSize+numberOfFeatures+len(sob))] = sob
             #X[i, self.imageSize+3] = newfeature
         return X
 

@@ -25,7 +25,7 @@ if __name__ == '__main__':
     start_time = time.time()
     C = ConfigFileReader.ConfigFileReader()
     # get the classnames from the directory structure
-    debug = True
+    debug = False
     test  = False
     n_estimators=200 # make this higher to improve score (and computing time)
     addImage=True # adds the image pixels as features.
