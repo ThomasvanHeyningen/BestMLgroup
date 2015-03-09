@@ -117,14 +117,17 @@ class featureExtractor():
         
         feat_dict = {}
         for line in feat_reader:
-            name = line[0]
-            feat_dict.update({name: line[1:]})
+            lbl  = line[0]
+            name = line[1]
+            feat_dict.update({name: line[2:]})
+            #lbl_dict.update({name: lbl})
 
         nfeatures = len(feat_dict.itervalues().next())
         features = np.zeros((len(names), nfeatures))
+        #labels   = np.zeros( len(names))
         print("nfeatures: ", nfeatures, ", nImgs: ", len(names))
         for i, name in enumerate(names):
             name = os.path.split(name)[1]
             features[i] = feat_dict[name]
-        print(features[1])
-        return features
+              #labels[i] =  lbl_dict[name]
+        return features#, labels # Actually don't need labels

@@ -1,7 +1,7 @@
 require 'nn'
 
 local imgSize = {50,50}
-local dataDir = '/home/harmen/Programming/data/test/'
+local dataDir = '/home/harmen/Programming/data/train/'
 local mainDir = '/home/harmen/Programming/BestMLgroup/CNN/'
 local clsfDir = mainDir .. 'classifier/'
 local saveDir = clsfDir

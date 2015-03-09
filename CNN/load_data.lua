@@ -50,7 +50,7 @@ end
 local function getLbls(files)
     local lblList = {}
     for i, file in ipairs(files) do
-        lblList[i] = lblDict[file]
+        lblList[i] = lblDict[file] .. ',' .. file
     end
     return lblList
 end
