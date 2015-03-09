@@ -5,6 +5,8 @@ import csv
 import os
 import ConfigFileReader
 import math
+from skimage.segmentation._quickshift import ndimage
+from astropy.coordinates.earth_orientation import eccentricity
 
 class featureExtractor():
 
