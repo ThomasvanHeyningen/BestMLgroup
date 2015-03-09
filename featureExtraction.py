@@ -83,6 +83,12 @@ class featureExtractor():
         '''
         return bwmean
 
+    def edges(self, image):
+        sx = ndimage.sobel(image, axis=0, mode='constant')
+        sy = ndimage.sobel(image, axis=1, mode='constant')
+        sob = np.hypot(sx,sy)
+        return sob
+
     def extract(self, images, addImage):
         numberOfFeatures=14
         if not addImage:

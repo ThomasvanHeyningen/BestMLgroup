@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # get the classnames from the directory structure
     debug = False
     test  = False
-    n_estimators=200 # make this higher to improve score (and computing time)
+    n_estimators=300 # make this higher to improve score (and computing time)
     addImage=True # adds the image pixels as features.
 
     if debug: 
