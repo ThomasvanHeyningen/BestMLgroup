@@ -35,12 +35,14 @@ end
 extractor = torch.load(dir .. (arg[2] or latestModel('feature_extractor_')))
 extractor:evaluate()
 batchSize = 2000
-maxImgs = 30336
+--maxImgs = 30336
+maxImgs = 130400
 
 openfile = io.open('features.csv' , 'w') -- Remove previous features
 local n = 144
 for b = 1,maxImgs, batchSize do
-    print('Parsing imgs ' .. b .. ' to ' .. (b + batchSize))
+    collectgarbage()
+    print('Parsing imgs ' .. b .. ' to ' .. (b + batchSize - 1))
     if (b + batchSize > maxImgs) then
         imgs, lbls = load_data.getAll(false, true)
     else

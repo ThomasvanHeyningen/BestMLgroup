@@ -11,13 +11,22 @@ local lblDict  = {}
 local fileList = {}
 
 local function preload()
-    for dir in lfs.dir(dataDir) do
-        if globals.isDir(dir) then
-            for file in lfs.dir(dataDir .. dir) do
-                if globals.isImgFile(file) then
-                    table.insert(fileList, file)
-                    lblDict[file] = dir
+    if string.find(dataDir, 'train') then
+        for dir in lfs.dir(dataDir) do
+            if globals.isDir(dir) then
+                for file in lfs.dir(dataDir .. dir) do
+                    if globals.isImgFile(file) then
+                        table.insert(fileList, file)
+                        lblDict[file] = dir
+                    end
                 end
+            end
+        end
+    else
+        for file in lfs.dir(dataDir) do
+            if globals.isImgFile(file) then
+                table.insert(fileList, file)
+                lblDict[file] = '' -- No labels
             end
         end
     end

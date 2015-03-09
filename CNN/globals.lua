@@ -1,7 +1,7 @@
 require 'nn'
 
 local imgSize = {50,50}
-local dataDir = '/home/harmen/Programming/BestMLgroup/data/test/'
+local dataDir = '/home/harmen/Programming/data/test/'
 local mainDir = '/home/harmen/Programming/BestMLgroup/CNN/'
 local clsfDir = mainDir .. 'classifier/'
 local saveDir = clsfDir
@@ -15,7 +15,7 @@ local pruneNr      = 3
 local retrain      = 'none'
 local batchSize    = 250
 local progressBar  = true
-local epochSize    = 50000
+local epochSize    = 100000
 local maxIter      = 2000
 local learningrate = 1e-5
 local decay        = 1e-9
