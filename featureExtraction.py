@@ -4,6 +4,7 @@ import numpy as np
 import csv
 import os
 import ConfigFileReader
+import math
 
 class featureExtractor():
 
@@ -32,7 +33,6 @@ class featureExtractor():
 
         #Dilate the image
         imdilated = morphology.dilation(imagethr, np.ones((4,4)))
-
         # Create the label list
         label_list = measure.label(imdilated)
         label_list = imagethr*label_list
@@ -64,22 +64,37 @@ class featureExtractor():
             perimeter = 0.0 if maxregion is None else  1.0*maxregion.perimeter
             euler = 0.0 if maxregion is None else  1.0*maxregion.euler_number
             if (maxregion.perimeter != 0.0):
-                circularity = (12.5663706*area)/(perimeter*perimeter)
+                circularity = (math.pi*4*area)/(perimeter*perimeter)
         return ratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler
 
+    def getBwRatio(self, image):
+        image = image.copy()
+        bwmean = sum(image) / len(image)
+        '''
+        #Other possible solution disregarding the white background of the image
+        numberOfOnes = (image == 1).sum()
+        bwmean = (sum(image)-numberOfOnes) / (len(image)-numberOfOnes)
+        '''
+        return bwmean
 
-    def extract(self, images):
-        numberOfFeatures=10
+    def extract(self, images, addImage):
+        numberOfFeatures=11
+        if not addImage:
+            self.imageSize=0
         X= np.zeros((self.numberOfImages, self.imageSize+numberOfFeatures), dtype=float)
 
         for i in range(0,self.numberOfImages):
-            X[i, 0:self.imageSize] = images[i]
+            if addImage:
+                X[i, 0:self.imageSize] = images[i]
             image=np.reshape(images[i], (self.maxPixel, self.maxPixel))
             (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = self.getMinorMajorRatio(image)
+            image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
+            bwmean = self.getBwRatio(image)
             #(newfeature) = function(image)
+            #X[i, self.imageSize+3] = newfeature
             X[i, self.imageSize+0] = axisratio
             X[i, self.imageSize+1] = height # this might not be good
-            X[i, self.imageSize+2] = width# this might not be good
+            X[i, self.imageSize+2] = width# this might not be
             X[i, self.imageSize+3] = centroidrow
             X[i, self.imageSize+4] = centroidcol
             X[i, self.imageSize+5] = convex_area
@@ -87,13 +102,17 @@ class featureExtractor():
             X[i, self.imageSize+7] = circularity
             X[i, self.imageSize+8] = euler
             X[i, self.imageSize+9] = area
+            X[i, self.imageSize+10] = bwmean
             #X[i, self.imageSize+3] = newfeature
         return X
 
-    def getCNNfeatures(self, names):
+    def getCNNfeatures(self, names, which):
         C = ConfigFileReader.ConfigFileReader()
         f_dir  = C.getVariable('Directories', 'CNNdir')
-        f_file = C.getVariable('Directories', 'CNNfeatures')
+        if which == 'train':
+            f_file = C.getVariable('Directories', 'CNNtrainfeatures')
+        else:
+            f_file = C.getVariable('Directories', 'CNNtestfeatures')
         feat_reader = csv.reader(open(os.path.join(f_dir, f_file)), delimiter=',')
         
         feat_dict = {}
@@ -103,8 +122,9 @@ class featureExtractor():
 
         nfeatures = len(feat_dict.itervalues().next())
         features = np.zeros((len(names), nfeatures))
+        print("nfeatures: ", nfeatures, ", nImgs: ", len(names))
         for i, name in enumerate(names):
             name = os.path.split(name)[1]
             features[i] = feat_dict[name]
-        print(features[i])
+        print(features[1])
         return features

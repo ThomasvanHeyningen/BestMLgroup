@@ -12,7 +12,7 @@ class predictor():
         self.n_folds=n_folds
         self.n_estimators=n_estimators
 
-    def trainclf(self, X, y, namesClasses):
+    def trainfoldedclf(self, X, y, namesClasses):
         kf = KFold(y, self.n_folds)
         y_pred = y * 0
         y_prob = np.zeros((len(y),len(set(y))))
@@ -24,7 +24,13 @@ class predictor():
             y_pred[test] = clf.predict(X_test)
             y_prob[test] = clf.predict_proba(X_test)
         print classification_report(y, y_pred, target_names=namesClasses)
-        scores = cross_validation.cross_val_score(clf, X, y, cv=self.n_folds, n_jobs=1);
-        print "Accuracy of all classes"
-        print np.mean(scores)
-        return(y_pred, y_prob)
+        #scores = cross_validation.cross_val_score(clf, X, y, cv=self.n_folds, n_jobs=1);
+        #print "Accuracy of all classes"
+        #print np.mean(scores)
+        return(y_pred, y_prob, clf)
+
+    def trainunfoldedclf(self, X, y):
+        clf = RF(self.n_estimators, n_jobs=3)
+        clf.fit(X, y)
+        return(clf)
+

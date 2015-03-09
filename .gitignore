@@ -9,3 +9,4 @@ CNN/classifier
 CNN/classifier/*
 
 data/*
+data/
