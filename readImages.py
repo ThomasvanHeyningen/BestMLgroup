@@ -108,7 +108,7 @@ class ImageReader:
         # y is the numeric class label
         y = np.zeros((num_rows))
 
-        files = []
+        self.files = []
         # Generate training data
         i = 0
         label = 0
@@ -133,7 +133,7 @@ class ImageReader:
                     imageName=re.sub('\.\.\\\\test\\\\test\\\\', "", nameFileImage)
                     namesFiles.append(imageName)
                     image = imread(nameFileImage, as_grey=True)
-                    files.append(nameFileImage)
+                    self.files.append(nameFileImage)
                     image = resize(image, (self.maxPixel, self.maxPixel))
 
                     # Store the rescaled image pixels and the axis ratio

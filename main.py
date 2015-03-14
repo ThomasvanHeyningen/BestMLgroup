@@ -26,7 +26,7 @@ if __name__ == '__main__':
     C = ConfigFileReader.ConfigFileReader()
     # get the classnames from the directory structure
     debug = False
-    test  = False
+    test  = True
     n_estimators=300 # make this higher to improve score (and computing time)
     addImage=True # adds the image pixels as features.
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         print "extracting features for test set"
         featureExtractor=featureExtraction.featureExtractor(testImageReader.getMaxPixel(), testImageReader.getNumberOfImages())
         testset = featureExtractor.extract(testimages, addImage)
-        testset2= featureExtractor.extractCNNfeatures(testImageReader.files, 'test')
+        testset2= featureExtractor.getCNNfeatures(testImageReader.files, 'test')
 
         testset = np.hstack([testset,testset2])
 
