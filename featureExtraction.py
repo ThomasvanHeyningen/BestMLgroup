@@ -116,12 +116,15 @@ class featureExtractor():
         feat_reader = csv.reader(open(os.path.join(f_dir, f_file)), delimiter=',')
         
         feat_dict = {}
+        q = 0
         for line in feat_reader:
+            q+=1
             lbl  = line[0]
             name = line[1]
+            if name in feat_dict: print(q)
             feat_dict.update({name: line[2:]})
             #lbl_dict.update({name: lbl})
-
+        print(q)
         nfeatures = len(feat_dict.itervalues().next())
         features = np.zeros((len(names), nfeatures))
         #labels   = np.zeros( len(names))

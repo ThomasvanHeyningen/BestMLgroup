@@ -1,10 +1,13 @@
 require 'nn'
 
-local imgSize = {50,50}
-local dataDir = '/home/harmen/Programming/data/train/'
-local mainDir = '/home/harmen/Programming/BestMLgroup/CNN/'
-local clsfDir = mainDir .. 'classifier/'
-local saveDir = clsfDir
+local imgSize  = {50,50}
+local dataDir  = '/home/harmen/Programming/data/'
+local trainDir = dataDir .. 'train/'
+local testDir  = dataDir .. 'test/'
+local mainDir  = '/home/harmen/Programming/BestMLgroup/CNN/'
+local clsfDir  = mainDir .. 'classifier/'
+local saveDir  = clsfDir
+local nclass   = 121
 
 -- local netConfigFile = mainDir .. 'net_config.ini'
 lblfile = dataDir .. 'lblfile.csv'
@@ -13,14 +16,14 @@ local currentNet   = 'net2'
 local pruneData    = true
 local pruneNr      = 3
 local retrain      = 'none'
-local batchSize    = 250
+local batchSize    = 100
 local progressBar  = true
-local epochSize    = 100000
+local epochSize    = 30000
 local maxIter      = 2000
 local learningrate = 1e-5
 local decay        = 1e-9
-local momentum     = 0.1
-local statinterval = 3
+local momentum     = 0.5
+local statinterval = 1
 
 local function isImgFile(str)
     return string.find(str, '.jpg') or string.find(str, '.JPG')
@@ -30,11 +33,14 @@ local function isDir(str)
 end
 
 globals = {}
-globals.imgSize = imgSize
-globals.dataDir = dataDir
-globals.mainDir = mainDir
-globals.clsfDir = clsfDir
-globals.saveDir = saveDir
+globals.imgSize  = imgSize
+globals.dataDir  = dataDir
+globals.trainDir = trainDir
+globals.testDir  = testDir
+globals.mainDir  = mainDir
+globals.clsfDir  = clsfDir
+globals.saveDir  = saveDir
+globals.nclass   = nclass
 -- globals.netConfigFile = netConfigFile
 globals.currentNet   = currentNet
 globals.lblfile      = lblfile

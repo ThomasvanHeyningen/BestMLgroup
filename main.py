@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # get the classnames from the directory structure
     debug = True
     test  = False
-    n_estimators=200 # make this higher to improve score (and computing time)
-    addImage=True # adds the image pixels as features.
+    n_estimators=80 # make this higher to improve score (and computing time)
+    addImage=False # adds the image pixels as features.
 
     if debug: 
         train_dir = C.getVariable("Directories", "train_small")

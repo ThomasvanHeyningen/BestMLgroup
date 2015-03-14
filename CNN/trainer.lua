@@ -6,7 +6,7 @@ require 'nn'
 require 'optim'
 
 
-function train(model)
+function train(model, unsup)
     if unsup then
         return trainUnsup(model)
     else
@@ -21,6 +21,7 @@ function trainUnsup(module)
     -- training errors
     local err = 0
     local iter = 0
+
     
     for t = 1,globals.epochSize,globals.batchSize do
         iter = iter+1
@@ -119,6 +120,9 @@ function trainSup(model)
         parameters,gradParameters = model:getParameters()
         collectgarbage()
     end
+
+    local criterion = nn.MultiMarginCriterion()
+
     -- epoch tracker
     epoch = epoch or 1
     -- local vars
@@ -127,12 +131,14 @@ function trainSup(model)
     -- do one epoch
     print('<trainer> on training set:')
     print("<trainer> online epoch # " .. epoch .. ' [batchSize = ' .. batchSize .. ']')
-    local tMSE = 0
+    iter = 0
     for t = 1,epochSize,batchSize do
+        local tMSE = 0
+        iter = iter + 1
         -- disp progress
-        if globals.progressBar then xlua.progress(t, epochSize) end
+        xlua.progress(iter, globals.statinterval)
         -- create mini batch
-        local inputs, targets = load_data.getBatch(batchSize)
+        local inputs, targets, names = load_data.getBatch(batchSize, true, true)
         -- inputs = inputs:cuda()
         -- create closure to evaluate f(X) and df/dX
         local feval = function(x)
@@ -148,13 +154,16 @@ function trainSup(model)
             -- estimate f
             for i=1,batchSize do
                 local output = model:updateOutput(inputs[i], targets[i])
-                f = f + output
+                local err = criterion:forward(output, targets[i])
+                f = f + err
 
                 -- estimate df/dW
                 local df_do = criterion:backward(output, targets[i])
                 model:backward(inputs[i], df_do)
-                confusion:add(output, targets[i])
+                --confusion:add(output, targets[i])
+                tMSE = tMSE + f
             end
+            print('==> iteration = ' .. t .. ', average loss = ' .. tMSE/globals.statinterval)
             gradParameters:div(batchSize)
             -- fgradParameters:mul(#branch)
             f = f/batchSize
@@ -165,7 +174,8 @@ function trainSup(model)
         optim.sgd(feval, parameters, optimState)
     end
     -- time taken
-    local rMSE = math.sqrt(tMSE / (epochSize))
+    --local rMSE = math.sqrt(tMSE / (epochSize))
+    return model
 end
 
 

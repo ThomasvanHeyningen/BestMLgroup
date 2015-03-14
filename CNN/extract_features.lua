@@ -32,28 +32,39 @@ local function latestModel(model_name)
     return model_name .. table.concat(dates[1], '_') .. '.dat'
 end
 
-extractor = torch.load(dir .. (arg[2] or latestModel('feature_extractor_')))
-extractor:evaluate()
+model = torch.load(dir .. (arg[2] or latestModel('feature_extractor_')))
+extractor =  nn.Sequential()
+classifier = nn.Sequential()
+for i = 1,12 do
+    extractor:add(model:get(i))
+end
+for i = 13,15 do
+    classifier:add(model:get(i))
+end
+extractor :evaluate()
+classifier:evaluate()
 batchSize = 2000
-maxImgs = 30336
---maxImgs = 130400
+--maxImgs = 30336; load_data.setDir('train')
+maxImgs = 130400; load_data.setDir('test')
 
 openfile = io.open('features.csv' , 'w') -- Remove previous features
-local n = 144
+local n = 6*6*16
 for b = 1,maxImgs, batchSize do
     collectgarbage()
     print('Parsing imgs ' .. b .. ' to ' .. (b + batchSize - 1))
     if (b + batchSize > maxImgs) then
-        imgs, lbls = load_data.getAll(false, true)
+        imgs, lbls, files = load_data.getAll(true, true)
     else
-        imgs, lbls = load_data.getBatch(batchSize, false, true)
+        imgs, lbls, files = load_data.getBatch(batchSize, true, true)
     end
-    for i = 1, #imgs do
-        local feature = extractor:forward(imgs[i])
+    for i = 1, (#imgs)[1] do
+        local feature    = extractor :forward(imgs[i])
+        local prediction = classifier:forward(feature)
         feature = torch.reshape(feature, n)
+        feature = torch.cat(feature, prediction)
         feature = torch.totable(feature)
         feature = table.concat(feature, ',')
-        feature = lbls[i] .. ',' .. feature
+        feature = (lbls[i] or '') .. ',' .. files[i] .. ',' .. feature
         openfile:write(feature)
         openfile:write('\n')
     end

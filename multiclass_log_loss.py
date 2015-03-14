@@ -5,7 +5,6 @@ class MulticlassLogLoss:
 
     def __init__(self):
         self.eps=1e-15
-        #totally empty
 
     def calculate_log_loss(self, y_true, y_pred):
         """Multi class version of Logarithmic Loss metric.

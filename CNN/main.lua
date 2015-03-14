@@ -13,18 +13,21 @@ require 'nn'
 local model = net.stageOne()
 local decoder = net.stageTwo()
 
-unlabeledSet = true
+local unlabeledSet = true
 if unlabeledSet then
+    load_data.setDir('test')
     local autoEncoder = unsup.AutoEncoder(model, decoder)
     autoEncoder.beta   = 6.0
-    autoEncoder = trainer.train(autoEncoder)
+    autoEncoder = trainer.train(autoEncoder, true)
     model = autoEncoder.encoder
     decoder = autoEncoder.decoder
 end
 
+local trainSet = true
 if trainSet then
+    load_data.setDir('train')
     model = net.addClassifier(model)
-    model = trainer.train(model, trainSet)
+    model = trainer.train(model, false)
 end
 
 local today = os.date('_%d_%m_%y')
