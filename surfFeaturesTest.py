@@ -11,7 +11,7 @@ import os
 import random
 from skimage.io import imread
 import siftFeaturesExtractor as se
-from sklearn.naive_bayes import MultinomialNB
+import sklearn.ensemble as ensm
 import sklearn.metrics as met
 
 TRAIN_PATH = '../train'
@@ -49,28 +49,42 @@ def loadImages(train_path, class_range_lower, class_range_upper, frac):
 def ClassifierTest():
     """ Tests out classifiers on the SURF-features.    
     """
-    train_images, train_classes = loadImages(TRAIN_PATH, 40, 43, 1.0)
+    FRAC = 1.0      # fraction of samples used for training and testing
+    TEST_FRAC = 0.3 # fraction of the sampled dataset used for testing
+    CLASS_LOWER = 0 
+    CLASS_UPPER = 5    
     
+    images, classes = loadImages(TRAIN_PATH, CLASS_LOWER, CLASS_UPPER, FRAC)    
+    
+    # randomly take out TEST_FRAC * len(images) samples for testing
+    N_img = len(images)    
+    test_indices = random.sample(range(0,N_img), int(TEST_FRAC*N_img))    
+    
+    test_images = [images[i] for i in test_indices]
+    test_classes = [classes[i] for i in test_indices]
+    
+    train_images = [images[i] for i in range(0,N_img) if i not in test_indices]
+    train_classes = [classes[i] for i in range(0,N_img) if i not in test_indices]
+    
+    # extract all the SURF-features and cluster them (vector quantization)        
     sift_extr = se.SiftExtractor()
     sift_extr.clusterFeatures(train_images, 20)
-        
-    sift_bags = [sift_extr.getBagOfWordsImage(image) for image in train_images]
     
-    # Naïve Bayes lijkt slecht te werken naarmate er veel klassen zijn.    
-    bayes_classifier = MultinomialNB()
-    bayes_classifier.fit(sift_bags, train_classes)
+    # get the SURF-feature vectors of the images in the training set
+    train_feats = [sift_extr.getBagOfWordsImage(image) for image in train_images]
     
-    test_imgs, test_classes = loadImages(TRAIN_PATH, 40, 43, 0.2)
-    sift_test_bags = [sift_extr.getBagOfWordsImage(image) for image in test_imgs]
+    # train classifier on the feature vectors
+    random_forest = ensm.RandomForestClassifier(n_estimators = 30)
+    random_forest.fit(train_feats, train_classes)
     
+    # get the SURF-feature vectors of the images in the test set
+    test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
     
-    predictions = bayes_classifier.predict(sift_test_bags)
+    predictions = random_forest.predict_proba(test_feats)
     
-    accuracy = met.accuracy_score(test_classes, predictions)
-    
-    print "accuracy:", accuracy
-    
-    return predictions, test_classes
-
+    # Logloss score      
+    logloss_score = met.log_loss(test_classes, predictions)
+ 
+    print "log loss:", logloss_score 
     
     
