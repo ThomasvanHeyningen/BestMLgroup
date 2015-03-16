@@ -13,3 +13,5 @@ CNN/classifier/*
 
 data/*
 data/
+
+configFile.ini
