@@ -1,0 +1,10 @@
+
+Dit is de Python bibliotheek voor Open CV.
+Zet dit bestand in de map:
+
+[Map waar Python op deze computer geïnstalleerd is]/Lib/site-packages
+
+Als het goed is kan je hem daarna net als andere bibliotheken importeren 
+in Python-scripts en gebruiken.
+
+== H-C ==
