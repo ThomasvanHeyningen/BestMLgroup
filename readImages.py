@@ -12,7 +12,7 @@ class ImageReader:
         self.numberofImages = 0
         self.maxPixel = 25
         self.imageSize = self.maxPixel*self.maxPixel
-        self.numberOfFeatures=10
+        self.numberOfFeatures=14
 
     def deriveNumberOfImages(self):
         #loops through the training categories to find the number of images
@@ -82,13 +82,8 @@ class ImageReader:
                     nameFileImage = "{0}{1}{2}".format(fileNameDir[0], os.sep, fileName)
                     image = imread(nameFileImage, as_grey=True)
                     files.append(nameFileImage)
-                    image = resize(image, (self.maxPixel, self.maxPixel))
+                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler, eccentricity, equivalent_diameter, extent) = featureExtractor.getMinorMajorRatio(image)
 
-                    # Store the rescaled image pixels and the axis ratio
-                    X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
-                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = featureExtractor.getMinorMajorRatio(image)
-                    #image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
-                    #bwmean = featureExtractor.getBwRatio(image)
                     X[i, self.imageSize+0] = axisratio
                     X[i, self.imageSize+1] = height
                     X[i, self.imageSize+2] = width
@@ -99,7 +94,17 @@ class ImageReader:
                     X[i, self.imageSize+7] = circularity
                     X[i, self.imageSize+8] = euler
                     X[i, self.imageSize+9] = area
-                    #X[i, self.imageSize+10] = bwmean
+                    X[i, self.imageSize+11] = eccentricity
+                    X[i, self.imageSize+12] = equivalent_diameter
+                    X[i, self.imageSize+13] = extent
+
+                    #resize image
+                    image = resize(image, (self.maxPixel, self.maxPixel))
+                    # Store the rescaled image pixels
+                    X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
+                    image2=np.reshape(image, (self.maxPixel*self.maxPixel, 1))
+                    bwmean = featureExtractor.getBwRatio(image2)
+                    X[i, self.imageSize+10] = bwmean
 
                     # Store the classlabel
                     y[i] = label
@@ -153,13 +158,8 @@ class ImageReader:
                     namesFiles.append(imageName)
                     image = imread(nameFileImage, as_grey=True)
                     files.append(nameFileImage)
-                    image = resize(image, (self.maxPixel, self.maxPixel))
 
-                    # Store the rescaled image pixels and the axis ratio
-                    X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
-                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = featureExtractor.getMinorMajorRatio(image)
-                    #image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
-                    #bwmean = featureExtractor.getBwRatio(image)
+                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler, eccentricity, equivalent_diameter, extent) = featureExtractor.getMinorMajorRatio(image)
                     X[i, self.imageSize+0] = axisratio
                     X[i, self.imageSize+1] = height
                     X[i, self.imageSize+2] = width
@@ -170,7 +170,17 @@ class ImageReader:
                     X[i, self.imageSize+7] = circularity
                     X[i, self.imageSize+8] = euler
                     X[i, self.imageSize+9] = area
-                    #X[i, self.imageSize+10] = bwmean
+                    X[i, self.imageSize+11] = eccentricity
+                    X[i, self.imageSize+12] = equivalent_diameter
+                    X[i, self.imageSize+13] = extent
+
+                    #resize image
+                    image = resize(image, (self.maxPixel, self.maxPixel))
+                    # Store the rescaled image pixels
+                    X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
+                    image2=np.reshape(image, (self.maxPixel*self.maxPixel, 1))
+                    bwmean = featureExtractor.getBwRatio(image2)
+                    X[i, self.imageSize+10] = bwmean
 
                     # Store the classlabel
                     y[i] = label
