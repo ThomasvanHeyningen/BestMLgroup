@@ -3,6 +3,7 @@ from skimage.transform import resize
 import os
 import numpy as np
 import re
+import featureExtraction
 
 class ImageReader:
 
@@ -10,6 +11,8 @@ class ImageReader:
         self.directory_names=directory_names
         self.numberofImages = 0
         self.maxPixel = 25
+        self.imageSize = self.maxPixel*self.maxPixel
+        self.numberOfFeatures=10
 
     def deriveNumberOfImages(self):
         #loops through the training categories to find the number of images
@@ -37,7 +40,6 @@ class ImageReader:
         return self.numberofImages
 
     def read(self):
-
         #get the number of images first, we can later change this to allow the number to be given for quicker running.
         self.deriveNumberOfImages()
 
@@ -47,7 +49,7 @@ class ImageReader:
 
         # X is the feature vector with one row of features per image
         # consisting of the pixel values and our metric
-        X = np.zeros((num_rows, imageSize), dtype=float)
+        X = np.zeros((num_rows, imageSize+self.numberOfFeatures), dtype=float)
         # y is the numeric class label
         y = np.zeros((num_rows))
 
@@ -61,6 +63,9 @@ class ImageReader:
 
         print "Reading images"
         # Navigate through the list of directories
+
+        featureExtractor=featureExtraction.featureExtractor(self.getMaxPixel(), self.getNumberOfImages())
+
         for folder in self.directory_names:
             # Append the string class name for each class
             currentClass = folder.split(os.pathsep)[-1]
@@ -81,6 +86,20 @@ class ImageReader:
 
                     # Store the rescaled image pixels and the axis ratio
                     X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
+                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = featureExtractor.getMinorMajorRatio(image)
+                    #image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
+                    #bwmean = featureExtractor.getBwRatio(image)
+                    X[i, self.imageSize+0] = axisratio
+                    X[i, self.imageSize+1] = height
+                    X[i, self.imageSize+2] = width
+                    X[i, self.imageSize+3] = centroidrow
+                    X[i, self.imageSize+4] = centroidcol
+                    X[i, self.imageSize+5] = convex_area
+                    X[i, self.imageSize+6] = perimeter
+                    X[i, self.imageSize+7] = circularity
+                    X[i, self.imageSize+8] = euler
+                    X[i, self.imageSize+9] = area
+                    #X[i, self.imageSize+10] = bwmean
 
                     # Store the classlabel
                     y[i] = label
@@ -102,7 +121,7 @@ class ImageReader:
 
         # X is the feature vector with one row of features per image
         # consisting of the pixel values and our metric
-        X = np.zeros((num_rows, imageSize), dtype=float)
+        X = np.zeros((num_rows, imageSize+self.numberOfFeatures), dtype=float)
         # y is the numeric class label
         y = np.zeros((num_rows))
 
@@ -113,6 +132,8 @@ class ImageReader:
         # List of string of class names
         namesClasses = list()
         namesFiles = list()
+
+        featureExtractor=featureExtraction.featureExtractor(self.getMaxPixel(), self.getNumberOfImages())
 
         print "Reading testset images"
         # Navigate through the list of directories
@@ -136,6 +157,20 @@ class ImageReader:
 
                     # Store the rescaled image pixels and the axis ratio
                     X[i, 0:imageSize] = np.reshape(image, (1, imageSize))
+                    (axisratio, width, height, area, centroidrow, centroidcol, convex_area, perimeter, circularity, euler) = featureExtractor.getMinorMajorRatio(image)
+                    #image=np.reshape(images[i], (self.maxPixel*self.maxPixel, 1))
+                    #bwmean = featureExtractor.getBwRatio(image)
+                    X[i, self.imageSize+0] = axisratio
+                    X[i, self.imageSize+1] = height
+                    X[i, self.imageSize+2] = width
+                    X[i, self.imageSize+3] = centroidrow
+                    X[i, self.imageSize+4] = centroidcol
+                    X[i, self.imageSize+5] = convex_area
+                    X[i, self.imageSize+6] = perimeter
+                    X[i, self.imageSize+7] = circularity
+                    X[i, self.imageSize+8] = euler
+                    X[i, self.imageSize+9] = area
+                    #X[i, self.imageSize+10] = bwmean
 
                     # Store the classlabel
                     y[i] = label
