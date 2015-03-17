@@ -1,5 +1,10 @@
 
 Dit is de Python bibliotheek voor Open CV.
+Het is o.a. nodig voor de SURF-features.
+
+Als je een 32-bits computer hebt neem je "cv2.pyd" die in de map "32-bits" staat,
+als je een 64-bits computer hebt neem je het bestand in de map "64-bits". 
+
 Zet dit bestand in de map:
 
 [Map waar Python op deze computer geïnstalleerd is]/Lib/site-packages
