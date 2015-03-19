@@ -6,8 +6,10 @@ import time
 
 import numpy as np
 import glob
+from skimage.transform import resize
 
 #imports van eigen classes
+import loadImages as limg
 import multiclass_log_loss
 import readImages
 import featureExtraction
@@ -36,6 +38,7 @@ if __name__ == '__main__':
     else:
         train_dir = C.getVariable("Directories", "train")
         test_dir  = C.getVariable("Directories", "test")
+        
     directory_names = list(set(glob.glob(os.path.join(train_dir, "*"))\
     ).difference(set(glob.glob(os.path.join(train_dir, "*.*")))))
     test_directory=glob.glob(test_dir)
@@ -76,3 +79,31 @@ if __name__ == '__main__':
         imageTester.test(testset, imagefilenames)
     print("--- execution took %s seconds ---" % (time.time() - start_time))
 
+def mainNew():
+    """ Testfunctie om nieuwe main te maken en uit te testen.    
+    """
+    
+    # Dit kan dan nog in een config file gezet worden.
+    DATA_PATH = "../train"
+    SAMPLE_FRAC = 0.5    
+    TEST_FRAC = 0.2
+    CLASS_INDICES = range(0,4)    
+    MAX_PIXEL = 25
+    
+    # load the images
+    train_imgs, train_clss, test_imgs, test_clss = \
+        limg.loadTrainAndTestSet(DATA_PATH, SAMPLE_FRAC, TEST_FRAC, CLASS_INDICES)
+    # Groot voordeel van de code hierboven is dat de test- en trainset met elke
+    # run willekeurig berekent wordt, wat de generalisatie verbeterd.
+    # Dit t.o.v. een vaste train- en testset. [HC]
+        
+    # resize the images for use in the CNN
+    train_imgs_res = [resize(img, (MAX_PIXEL, MAX_PIXEL)) for img in train_imgs]
+    test_imgs_res =  [resize(img, (MAX_PIXEL, MAX_PIXEL)) for img in test_imgs]
+    # Zouden dit ook kunnen verplaatsen naar 'loadImages', maar vooralsnog hier
+    # voor het geval we ook andere classifiers gaan gebruiken.
+    
+    feature_extractor = featureExtraction.featureExtractor(MAX_PIXEL,\
+        numberOfImages = len(train_imgs_res))
+           
+    

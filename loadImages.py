@@ -39,8 +39,11 @@ def loadImages(train_path, frac, class_indices = range(1,121)):
         class_n = class_n + 1
     print "Amount of images =", len(img_paths)    
     
-    # read and return the images and return their class names as well   
-    return [imread(image_path) for image_path in img_paths], classes
+    # read the images
+    images = [imread(image_path) for image_path in img_paths]    
+    
+    # return the images and their class names as well   
+    return images, classes
 
 def loadTrainAndTestSet(dataset_path, sample_fraction, test_fraction, class_indices = range(0,121)):
     """ Loads a training- and test set from 'dataset_path'.\n
