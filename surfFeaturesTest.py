@@ -11,6 +11,12 @@ import os
 import random
 from skimage.io import imread
 import siftFeaturesExtractor as se
+
+import numpy as np
+import warnings
+
+import sklearn.multiclass as mlc
+import sklearn.svm as svm
 import sklearn.ensemble as ensm
 import sklearn.metrics as met
 
@@ -48,11 +54,12 @@ def loadImages(train_path, class_range_lower, class_range_upper, frac):
 
 def ClassifierTest():
     """ Tests out classifiers on the SURF-features.    
-    """
+    """    
     FRAC = 1.0      # fraction of samples used for training and testing
     TEST_FRAC = 0.3 # fraction of the sampled dataset used for testing
+    CLUSTER_FRAC = 0.2 # fraction of the sampled training set used to cluster the SURF-features
     CLASS_LOWER = 0 
-    CLASS_UPPER = 5    
+    CLASS_UPPER = 121    
     
     images, classes = loadImages(TRAIN_PATH, CLASS_LOWER, CLASS_UPPER, FRAC)    
     
@@ -66,25 +73,51 @@ def ClassifierTest():
     train_images = [images[i] for i in range(0,N_img) if i not in test_indices]
     train_classes = [classes[i] for i in range(0,N_img) if i not in test_indices]
     
-    # extract all the SURF-features and cluster them (vector quantization)        
-    sift_extr = se.SiftExtractor()
-    sift_extr.clusterFeatures(train_images, 20)
+    # randomly take out CLUSTER_FRAC * len(train_images) samples for clustering
+    # the SURF-features.
+    N_train_imgs = len(train_images)
+    cluster_indices = random.sample(range(0,N_train_imgs), int(CLUSTER_FRAC*N_train_imgs))    
+    
+    cluster_images = [train_images[i] for i in cluster_indices]
+    
+    # extract all the SURF-features and cluster them (vector quantization) 
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")       
+        sift_extr = se.SiftExtractor()
+        sift_extr.clusterFeatures(cluster_images, 20)
     
     # get the SURF-feature vectors of the images in the training set
     train_feats = [sift_extr.getBagOfWordsImage(image) for image in train_images]
     
     # train classifier on the feature vectors
-    random_forest = ensm.RandomForestClassifier(n_estimators = 30)
-    random_forest.fit(train_feats, train_classes)
     
+    #classifier = mlc.OutputCodeClassifier(ensm.RandomForestClassifier(n_estimators = 30),\
+        #code_size = 2, random_state = 0)   
+         
+    #classifier = mlc.OneVsOneClassifier(ensm.RandomForestClassifier(n_estimators = 30))
+    
+    # This classifier one works the best for now, with an accuracy of 0.288 [HC]     
+    classifier = mlc.OneVsRestClassifier(ensm.RandomForestClassifier(n_estimators = 30))
+       
+    train_feats = np.array(train_feats)
+    train_classes = np.array(train_classes)    
+    
+    print "training the classifier on the vector-quantified SIFT-features..."
+    classifier.fit(train_feats, train_classes)
+    
+    print "predicting the classes of the test set..."
     # get the SURF-feature vectors of the images in the test set
-    test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
     
-    predictions = random_forest.predict_proba(test_feats)
+    #predictions_proba = classifier.predict_proba(test_feats)
+    predictions = classifier.predict(test_feats)    
     
-    # Logloss score      
-    logloss_score = met.log_loss(test_classes, predictions)
- 
-    print "log loss:", logloss_score 
+    accuracy = met.accuracy_score(test_classes, predictions)    
+    print "accuracy:", accuracy
+     
+    #logloss_score = met.log_loss(test_classes, predictions_proba) 
+    #print "log loss:", logloss_score 
     
     
