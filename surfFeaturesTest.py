@@ -10,9 +10,12 @@ Created on Thu Mar 05 22:22:40 2015
 import os
 import random
 from skimage.io import imread
+
+import featureExtraction as fe
 import siftFeaturesExtractor as se
 
 import numpy as np
+import skimage.transform as tr
 import warnings
 
 import sklearn.multiclass as mlc
@@ -52,14 +55,26 @@ def loadImages(train_path, class_range_lower, class_range_upper, frac):
     
     return [imread(image_path) for image_path in img_paths], classes
 
+def resizeImages(images, size):
+    return [tr.resize(img,(size, size)) for img in images]
+
+# Dit vreet al het geheugen op, zelfs als er maar op twee klassen getrained wordt...
+def extendWithOtherFeatures(images, sift_features, img_max_size):
+    images_resized = resizeImages(images, img_max_size)
+    
+    other_feats_extractor = fe.featureExtractor(img_max_size, len(images_resized))
+    other_feats = other_feats_extractor.extract(images_resized, None)
+    
+    return [np.append(a, b) for a in sift_features for b in other_feats]
+
 def ClassifierTest():
     """ Tests out classifiers on the SURF-features.    
     """    
     FRAC = 1.0      # fraction of samples used for training and testing
     TEST_FRAC = 0.3 # fraction of the sampled dataset used for testing
     CLUSTER_FRAC = 0.2 # fraction of the sampled training set used to cluster the SURF-features
-    CLASS_LOWER = 0 
-    CLASS_UPPER = 121    
+    CLASS_LOWER = 10 
+    CLASS_UPPER = 20    
     
     images, classes = loadImages(TRAIN_PATH, CLASS_LOWER, CLASS_UPPER, FRAC)    
     
@@ -89,6 +104,13 @@ def ClassifierTest():
     # get the SURF-feature vectors of the images in the training set
     train_feats = [sift_extr.getBagOfWordsImage(image) for image in train_images]
     
+    # maximum size (either width or length) of the images in pixels
+    img_max_size = max(  max([len(img) for img in train_images]),\
+                            max([len(img[0]) for img in train_images]))
+    
+    # extend the SURF-features with the other features.                       
+    #train_feats = extendWithOtherFeatures(train_images, train_feats, img_max_size)
+    
     # train classifier on the feature vectors
     
     #classifier = mlc.OutputCodeClassifier(ensm.RandomForestClassifier(n_estimators = 30),\
@@ -99,9 +121,6 @@ def ClassifierTest():
     # This classifier one works the best for now, with an accuracy of 0.288 [HC]     
     classifier = mlc.OneVsRestClassifier(ensm.RandomForestClassifier(n_estimators = 30))
        
-    train_feats = np.array(train_feats)
-    train_classes = np.array(train_classes)    
-    
     print "training the classifier on the vector-quantified SIFT-features..."
     classifier.fit(train_feats, train_classes)
     
@@ -110,6 +129,9 @@ def ClassifierTest():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
+    
+    # extend the SURF-features with the other features.
+    #test_feats = extendWithOtherFeatures(test_images, test_feats, img_max_size)
     
     #predictions_proba = classifier.predict_proba(test_feats)
     predictions = classifier.predict(test_feats)    

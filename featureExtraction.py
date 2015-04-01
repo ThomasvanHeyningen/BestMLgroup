@@ -6,7 +6,7 @@ import os
 import ConfigFileReader
 import math
 from skimage.segmentation._quickshift import ndimage
-from astropy.coordinates.earth_orientation import eccentricity
+#from astropy.coordinates.earth_orientation import eccentricity
 
 class featureExtractor():
 
@@ -122,7 +122,7 @@ class featureExtractor():
             X[i, self.imageSize+11] = solidity
             X[i, self.imageSize+12] = eccentricity
             X[i, self.imageSize+13] = rectangularity
-            X[i, (self.imageSize+numberOfFeatures):(self.imageSize+numberOfFeatures+len(sob))] = sob
+            #X[i, (self.imageSize+numberOfFeatures):(self.imageSize+numberOfFeatures+len(sob))] = sob
             #X[i, self.imageSize+3] = newfeature
         return X
 
