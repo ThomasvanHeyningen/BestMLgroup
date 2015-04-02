@@ -28,8 +28,6 @@ def underSample(image_paths, required_size):
     return [imread(img_path) for img_path in new_image_paths]
 
 def loadImages(train_path, class_range_lower = 0, class_range_upper = 121, frac = 1, test_frac = 0.2):
-    """ Je moeder.            
-    """
     # load (a chunk of) the class directory names              
     class_dirs = os.listdir(train_path)[class_range_lower:class_range_upper]
     print "Loading paths of classes", class_range_lower, "till", class_range_upper
