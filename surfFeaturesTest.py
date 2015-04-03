@@ -9,14 +9,16 @@ Created on Thu Mar 05 22:22:40 2015
 
 import os
 import random
+import time
+import numpy as np
+
 from skimage.io import imread
+import skimage.transform as tr
 
 import featureExtraction as fe
 import siftFeaturesExtractor as se
 import loadImages as limg
 
-import numpy as np
-import skimage.transform as tr
 import warnings
 
 import sklearn.multiclass as mlc
@@ -70,16 +72,17 @@ def extendWithOtherFeatures(images, sift_features, img_max_size):
 
 def ClassifierTest():
     """ Tests out classifiers on the SURF-features.    
-    """    
-    FRAC = 0.1      # fraction of samples used for training and testing
+    """
+    start = time.clock()
+    
+    FRAC = 0.3      # fraction of the dataset used for training and testing
     TEST_FRAC = 0.3 # fraction of the sampled dataset used for testing
-    CLUSTER_FRAC = 0.2 # fraction of the sampled training set used to cluster the SURF-features
+    CLUSTER_FRAC = 0.05 # fraction of the sampled training set used to cluster the SURF-features
     CLASS_LOWER = 0 
     CLASS_UPPER = 121    
     
     train_images, train_classes, test_images, test_classes = \
-                        limg.loadImages(TRAIN_PATH, class_range_lower = CLASS_LOWER,\
-                                        class_range_upper = CLASS_UPPER, frac = FRAC)    
+                        limg.loadImages(TRAIN_PATH, CLASS_LOWER, CLASS_UPPER, FRAC, TEST_FRAC)    
         
     # randomly take out CLUSTER_FRAC * len(train_images) samples for clustering
     # the SURF-features.
@@ -88,6 +91,7 @@ def ClassifierTest():
     
     cluster_images = [train_images[i] for i in cluster_indices]
     
+    print "Clustering on the SIFT-features of", len(cluster_images), "images."
     # extract all the SURF-features and cluster them (vector quantization) 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")       
@@ -111,7 +115,7 @@ def ClassifierTest():
          
     #classifier = mlc.OneVsOneClassifier(ensm.RandomForestClassifier(n_estimators = 30))
     
-    # This classifier one works the best for now, with an accuracy of 0.288 [HC]     
+    # This classifier works the best for now, with an accuracy of around  0.75 ~ 0.796, [HC]     
     classifier = mlc.OneVsRestClassifier(ensm.RandomForestClassifier(n_estimators = 30))
        
     print "training the classifier on the vector-quantified SIFT-features..."
@@ -135,4 +139,6 @@ def ClassifierTest():
     #logloss_score = met.log_loss(test_classes, predictions_proba) 
     #print "log loss:", logloss_score 
     
-    
+    end = time.clock()
+    timing = end - start
+    print "Total computation took", timing/60, "minutes"   

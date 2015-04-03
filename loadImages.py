@@ -13,8 +13,9 @@ import skimage.transform as tr
 TRAIN_PATH = '../train'
 
 def augmentDataset(images, required_size):    
-    
+    # sample from image,s with replacement, until the required size is reached
     new_images = np.random.choice(images, required_size)
+    # randomly rotate all the images (only in straight angles)
     for img in new_images:
         rot_angle = np.random.choice([0,45,90,135])       
         img = tr.rotate(img,rot_angle)
@@ -49,7 +50,9 @@ def loadImages(train_path, class_range_lower = 0, class_range_upper = 121, frac 
     max_class_size = max([len(imgs) for imgs in img_paths_per_class.itervalues()])  
     
     class_size = int(max_class_size*frac)
-    print "Uniform class size =", class_size    
+    N_classes = class_range_upper-class_range_lower
+    print "Uniform class size =", class_size, "images"
+    print "Total length dataset =", class_size, "*", N_classes, "=", class_size * N_classes, "images"     
     
     # class size is fixed, so repeat each class name class size times to get
     # the class names for all images
@@ -78,7 +81,5 @@ def loadImages(train_path, class_range_lower = 0, class_range_upper = 121, frac 
     
     train_images = [images[i] for i in range(0,N_img) if i not in test_indices]
     train_classes = [classes[i] for i in range(0,N_img) if i not in test_indices]
-    
-    print len(test_images), len(train_images)    
     
     return train_images, train_classes, test_images, test_classes

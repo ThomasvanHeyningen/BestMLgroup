@@ -79,7 +79,7 @@ class SiftExtractor:
         
         end = time.clock()
         timing = end - start
-        print "Computing time = ", timing        
+        print "Clustering took", timing/60, "minutes"        
 
     def getBagOfWordsImage(self, image):
         """ Gets the histogram of an image based on cluster membership.
