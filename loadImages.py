@@ -17,7 +17,7 @@ def augmentDataset(images, required_size):
     new_images = np.random.choice(images, required_size)
     # randomly rotate all the images (only in straight angles)
     for img in new_images:
-        rot_angle = np.random.choice([0,45,90,135])       
+        rot_angle = np.random.random*360      
         img = tr.rotate(img,rot_angle)
         
     return new_images    

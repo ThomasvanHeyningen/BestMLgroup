@@ -5,42 +5,80 @@ Created on Tue Feb 24 23:16:22 2015
 @author: Hans-Christiaan
 """
 
+import os
 import pylab
 import mahotas as mh
 import math
-from skimage.io import imread
 
-TEST_IMG_PATH = '../train/appendicularian_straight/33196.jpg'
+import skimage.io as imgIO
+import skimage.measure as meas
 
-def removeNoise(image_path):
-    # read image 
-    # (testing purposes only, final algorithm will get the image as an argument)
-    image = imread(image_path)
-    # blur the image so thresholding works better
-    image_blurred = (mh.gaussian_filter(image, 2)).astype('B')
-    
-    # get all the individual connected components and label them
-    labeled, nr_objects = mh.label(image_blurred < image_blurred.mean())
-    # get the label of the plankton, use the center pixel as a heuristic
-    # TODO: use the biggest 'blob' instead
-    center_y = math.floor(labeled.shape[0]/2)
-    center_x = math.floor(labeled.shape[1]/2)
-    plankton_label = labeled[center_y][center_x]    
-    # set the pixels that are decided to not be the plankton to white
-    image_mask = [pixel == plankton_label for pixel in labeled]
-    image_filtered = image * image_mask
-    image_filtered[image_filtered == 0] = 255
-    # show the before and after image, 
-    # for testing purposes only!
+TEST_IMG_PATH = '../train/crustacean_other/87567.jpg'
+INPUT_PATH = "../train"
+OUTPUT_PATH = "../train_preprocessed"
+
+def showImage(image):
     pylab.gray()
     pylab.imshow(image)
     pylab.show()
-    pylab.imshow(image_filtered)    
-    pylab.show()
+
+def removeNoise(image):
+    # blur the image so thresholding works better
+    image_blurred = (mh.gaussian_filter(image, 2)).astype('B')
+    # threshold the image and label the not connected components    
+    labeled, nr_objects = mh.label(image_blurred < image_blurred.mean())
+    # compute the properties of the components
+    props = meas.regionprops(labeled)
+    # get the label of the component with the largest area
+    regions = [(prop.area, prop.label) for prop in props]
+    label_largest_region = sorted(regions, reverse = True)[0][1]
+    
+    # set the pixels that are decided to not be the plankton to white
+    image_mask = [pixel == label_largest_region for pixel in labeled]
+    image_filtered = image * image_mask
+    image_filtered[image_filtered == 0] = 255
     
     return image_filtered
 
+def set_progress_bar(progress):
+    perc = progress/5
+    print '\r[{0}] {1}%'.format('#'*perc+" "*(20-perc), progress),
+
+def preprocessAndSaveImages(input_path, output_path):
+    """ Preprocesses the images in 'input_path' and saves them in 'output_path',
+        retaining the class directory structure.
+        NOTE: the images and directory structure of 'output_path' should already
+                exist!
+    """        
+    class_dirs = os.listdir(input_path)
+
+    img_paths = []    
+        
+    for class_dir in class_dirs:            
+        # get the paths to all of the images in this class
+        class_input_path = os.path.join(input_path, class_dir)
+        img_names = os.listdir(class_input_path)     
+      
+        img_paths.extend([os.path.join(class_dir,img_name) for img_name in img_names])        
+
+    total_l = float(len(img_paths))
+    print "Amount of images =", total_l    
+    print "Preprocessing images..."
+    img_counter = 0.0    
+    
+    for img_path in img_paths:
+        img_input_path = os.path.join(input_path, img_path)
+        img_output_path = os.path.join(output_path, img_path)        
+        
+        img = imgIO.imread(img_input_path)
+        img = preprocess(img)
+        imgIO.imsave(img_output_path, img)
+        
+        img_counter = img_counter + 1
+        set_progress_bar(int(img_counter/total_l*100))
+        
 # Script for preprocessing the data
-def preprocess(image_path):
-    return removeNoise(image_path)
+def preprocess(image):
+    return removeNoise(image)
+   
     
