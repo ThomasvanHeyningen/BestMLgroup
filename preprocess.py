@@ -8,7 +8,6 @@ Created on Tue Feb 24 23:16:22 2015
 import os
 import pylab
 import mahotas as mh
-import math
 
 import skimage.io as imgIO
 import skimage.measure as meas

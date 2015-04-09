@@ -7,18 +7,17 @@ Created on Thu Mar 05 22:22:40 2015
 @author: Hans-Christiaan
 """
 
-import os
+
 import random
 import time
 import numpy as np
 
-from skimage.io import imread
 import skimage.transform as tr
 
 import featureExtraction as fe
 import siftFeaturesExtractor as se
 import loadImages as limg
-import preprocess as prep
+import featureExtractionNew as fen
 
 import warnings
 
@@ -43,13 +42,22 @@ def extendWithOtherFeatures(images, sift_features, img_max_size):
     
     return [np.append(a, b) for a in sift_features for b in other_feats]
 
+def computeFeatureVector(surf_extr, image):
+    # get the vector quantified SURF-features
+    surf_quant = surf_extr.getBagOfWordsImage(image)
+    # get the region properties
+    reg_props = fen.getRegionFeatures(image)    
+    
+    
+    return np.append(surf_quant, reg_props)
+
 def ClassifierTest():
     """ Tests out classifiers on the SURF-features.    
     """
     start = time.clock()
     
-    FRAC = 0.3      # fraction of the dataset used for training and testing
-    TEST_FRAC = 0.3 # fraction of the sampled dataset used for testing
+    FRAC = 0.4      # fraction of the dataset used for training and testing
+    TEST_FRAC = 0.2 # fraction of the sampled dataset used for testing
     CLUSTER_FRAC = 0.05 # fraction of the sampled training set used to cluster the SURF-features
     CLASS_LOWER = 0 
     CLASS_UPPER = 121    
@@ -72,14 +80,13 @@ def ClassifierTest():
         sift_extr.clusterFeatures(cluster_images, 20)
     
     # get the SURF-feature vectors of the images in the training set
-    train_feats = [sift_extr.getBagOfWordsImage(image) for image in train_images]
+    #train_feats = [sift_extr.getBagOfWordsImage(image) for image in train_images]
     
-    # maximum size (either width or length) of the images in pixels
-    img_max_size = max(  max([len(img) for img in train_images]),\
-                            max([len(img[0]) for img in train_images]))
+    train_feats = [computeFeatureVector(sift_extr, image) for image in train_images]    
     
+    #img_size = 40   
     # extend the SURF-features with the other features.                       
-    #train_feats = extendWithOtherFeatures(train_images, train_feats, img_max_size)
+    #train_feats = extendWithOtherFeatures(train_images, train_feats, img_size)
     
     # train classifier on the feature vectors
     
@@ -98,8 +105,9 @@ def ClassifierTest():
     # get the SURF-feature vectors of the images in the test set
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
-    
+        #test_feats = [sift_extr.getBagOfWordsImage(image) for image in test_images]
+        test_feats = [computeFeatureVector(sift_extr, image) for image in test_images]        
+        
     # extend the SURF-features with the other features.
     #test_feats = extendWithOtherFeatures(test_images, test_feats, img_max_size)
     
